@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+prometheus_client
+pandas
+numpy
+matplotlib
+pytest
+pytest-cov
+requests
+langchain
+google-generativeai
+python-dotenv

@@ -1,0 +1,22 @@
+version: "3.9"
+
+services:
+  web:
+    image: nginx:latest
+    container_name: netsentinel-web
+    ports:
+      - "8080:80"
+
+  db:
+    image: postgres:15
+    container_name: netsentinel-db
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: netsentinel
+
+  prometheus:
+    image: prom/prometheus
+    container_name: netsentinel-prometheus
+    ports:
+      - "9090:9090"
