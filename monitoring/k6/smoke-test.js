@@ -8,10 +8,25 @@ export const options = {
 
 export default function () {
 
-    let response = http.get('http://localhost:8000/health');
+    // Login API
+    let loginResponse = http.get('http://localhost:8000/login');
 
-    check(response, {
-        'Status is 200': (r) => r.status === 200,
+    check(loginResponse, {
+        'Login API is reachable': (r) => r.status === 200,
+    });
+
+    // Product API
+    let productResponse = http.get('http://localhost:8000/products');
+
+    check(productResponse, {
+        'Product API is reachable': (r) => r.status === 200,
+    });
+
+    // Payment API
+    let paymentResponse = http.get('http://localhost:8000/payment');
+
+    check(paymentResponse, {
+        'Payment API is reachable': (r) => r.status === 200,
     });
 
     sleep(1);

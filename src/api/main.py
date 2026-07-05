@@ -1,26 +1,3 @@
-#from fastapi import FastAPI
-
-# Create the FastAPI application
-#app = FastAPI(
- #   title="NetSentinel API",
-   # description="Backend API for the NetSentinel Monitoring Platform",
-  #  version="1.0.0"
-#)
-
-# Root endpoint
-#@app.get("/")
-#def home():
-   # return {
-      #  "message": "Welcome to NetSentinel API"
-   # }
-
-# Health endpoint
-#@app.get("/health")
-#def health():
-   # return {
-    #    "status": "healthy"
-   # }
-
 from fastapi import FastAPI, Request
 from fastapi.responses import Response
 from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
@@ -36,6 +13,7 @@ from src.services.k6_service import (
 )
 from src.models.postman_summary import PostmanSummary
 from src.services.postman_service import get_postman_summary
+from src.services.network_watcher_service import check_connectivity
 
 from src.metrics.prometheus_metrics import (
     REQUEST_COUNT,
@@ -83,6 +61,28 @@ def home():
 def health():
     return {
         "status": "healthy"
+    }
+@app.get("/login")
+def login():
+    return {
+        "service": "Login API",
+        "status": "Authentication Successful"
+    }
+
+
+@app.get("/products")
+def products():
+    return {
+        "service": "Product API",
+        "status": "Products Retrieved"
+    }
+
+
+@app.get("/payment")
+def payment():
+    return {
+        "service": "Payment API",
+        "status": "Payment Service Available"
     }
 # ==========================================
 # Prometheus Metrics Endpoint
@@ -156,3 +156,6 @@ def get_postman_summary_api():
         failed_assertions=summary["failed_assertions"],
         average_response_time=summary["average_response_time"],
     )
+@app.get("/networkwatcher/summary")
+def get_networkwatcher_summary():
+    return check_connectivity()

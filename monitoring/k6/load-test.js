@@ -17,10 +17,19 @@ export const options = {
 
 export default function () {
 
-    let response = http.get('http://localhost:8000/performance/summary');
+    let login = http.get('http://localhost:8000/login');
+    check(login, {
+        'Login API Status 200': (r) => r.status === 200,
+    });
 
-    check(response, {
-        'Status is 200': (r) => r.status === 200,
+    let products = http.get('http://localhost:8000/products');
+    check(products, {
+        'Product API Status 200': (r) => r.status === 200,
+    });
+
+    let payment = http.get('http://localhost:8000/payment');
+    check(payment, {
+        'Payment API Status 200': (r) => r.status === 200,
     });
 
     sleep(1);

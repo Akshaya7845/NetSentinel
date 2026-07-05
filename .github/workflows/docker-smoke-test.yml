@@ -1,4 +1,4 @@
-name: Docker Smoke Test
+name: NetSentinel CI
 
 on:
   push:
@@ -7,16 +7,48 @@ on:
   workflow_dispatch:
 
 jobs:
-  smoke-test:
+  week5-validation:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-      - name: Verify docker-compose file
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Python Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest
+
+      - name: Verify Project Structure
         run: |
           test -f docker-compose.yml
-          echo "docker-compose.yml exists"
+          test -d monitoring
+          test -d tests
+          echo "Project structure verified."
 
-      - name: Smoke Test Passed
-        run: echo "Week 4 Smoke Test Successful!"
+      - name: Verify Test Files
+        run: |
+          test -f tests/connectivity_test.py
+          test -f tests/test_unit.py
+          echo "Week 5 test files found."
+
+      - name: Verify k6 Scripts
+        run: |
+          test -f monitoring/k6/smoke-test.js
+          test -f monitoring/k6/latency-test.js
+          test -f monitoring/k6/load-test.js
+          echo "k6 scripts verified."
+
+      - name: Verify Postman Collection
+        run: |
+          test -f "monitoring/postman/NetSentinel API Tests.postman_collection.json"
+          echo "Postman collection verified."
+
+      - name: Week 5 Validation Complete
+        run: echo "Week 5 project validation completed successfully!"
