@@ -1,0 +1,816 @@
+{
+  "collection": {
+    "_": {
+      "postman_id": "f98317d8-ca1d-4c77-b592-dbe895d33408",
+      "exporter_id": "49222019",
+      "collection_link": "https://go.postman.co/collection/49222019-f98317d8-ca1d-4c77-b592-dbe895d33408?source=collection_link"
+    },
+    "item": [
+      {
+        "id": "3f7454c6-35bb-46a2-8c12-ee61c0719daf",
+        "name": "Health Check",
+        "request": {
+          "url": {
+            "protocol": "http",
+            "port": "8000",
+            "path": [
+              "health"
+            ],
+            "host": [
+              "localhost"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "method": "GET"
+        },
+        "response": [],
+        "event": []
+      },
+      {
+        "id": "908cecd7-5ab5-4308-b4f8-c492603035b1",
+        "name": "Network Status",
+        "request": {
+          "url": {
+            "protocol": "http",
+            "port": "8000",
+            "path": [
+              "network",
+              "status"
+            ],
+            "host": [
+              "localhost"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "method": "GET"
+        },
+        "response": [],
+        "event": []
+      },
+      {
+        "id": "f54176e2-91ec-4927-861c-dd22561f9699",
+        "name": "Performance Summary",
+        "request": {
+          "url": {
+            "protocol": "http",
+            "port": "8000",
+            "path": [
+              "performance",
+              "summary"
+            ],
+            "host": [
+              "localhost"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "method": "GET"
+        },
+        "response": [],
+        "event": []
+      }
+    ],
+    "event": [],
+    "variable": [],
+    "info": {
+      "_postman_id": "f98317d8-ca1d-4c77-b592-dbe895d33408",
+      "name": "NetSentinel API Tests",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    }
+  },
+  "environment": {
+    "id": "a2015765-a78f-4906-ae02-e72d90045935",
+    "values": []
+  },
+  "globals": {
+    "id": "83a0be91-faed-4aa6-ad99-8ceaa937e138",
+    "values": []
+  },
+  "run": {
+    "stats": {
+      "iterations": {
+        "total": 1,
+        "pending": 0,
+        "failed": 0
+      },
+      "items": {
+        "total": 3,
+        "pending": 0,
+        "failed": 0
+      },
+      "scripts": {
+        "total": 0,
+        "pending": 0,
+        "failed": 0
+      },
+      "prerequests": {
+        "total": 3,
+        "pending": 0,
+        "failed": 0
+      },
+      "requests": {
+        "total": 3,
+        "pending": 0,
+        "failed": 0
+      },
+      "tests": {
+        "total": 3,
+        "pending": 0,
+        "failed": 0
+      },
+      "assertions": {
+        "total": 0,
+        "pending": 0,
+        "failed": 0
+      },
+      "testScripts": {
+        "total": 0,
+        "pending": 0,
+        "failed": 0
+      },
+      "prerequestScripts": {
+        "total": 0,
+        "pending": 0,
+        "failed": 0
+      }
+    },
+    "timings": {
+      "responseAverage": 44.333333333333336,
+      "responseMin": 6,
+      "responseMax": 101,
+      "responseSd": 40.89281382128433,
+      "dnsAverage": 0,
+      "dnsMin": 0,
+      "dnsMax": 0,
+      "dnsSd": 0,
+      "firstByteAverage": 0,
+      "firstByteMin": 0,
+      "firstByteMax": 0,
+      "firstByteSd": 0,
+      "started": 1783252318193,
+      "completed": 1783252318368
+    },
+    "executions": [
+      {
+        "cursor": {
+          "position": 0,
+          "iteration": 0,
+          "length": 3,
+          "cycles": 1,
+          "empty": false,
+          "eof": false,
+          "bof": true,
+          "cr": false,
+          "ref": "0143436d-c710-43ae-b541-767f894ef993",
+          "httpRequestId": "f6ae9d15-5e1a-416c-837b-260c42312686"
+        },
+        "item": {
+          "id": "3f7454c6-35bb-46a2-8c12-ee61c0719daf",
+          "name": "Health Check",
+          "request": {
+            "url": {
+              "protocol": "http",
+              "port": "8000",
+              "path": [
+                "health"
+              ],
+              "host": [
+                "localhost"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "method": "GET"
+          },
+          "response": [],
+          "event": []
+        },
+        "request": {
+          "url": {
+            "protocol": "http",
+            "port": "8000",
+            "path": [
+              "health"
+            ],
+            "host": [
+              "localhost"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "User-Agent",
+              "value": "PostmanRuntime/7.39.1",
+              "system": true
+            },
+            {
+              "key": "Accept",
+              "value": "*/*",
+              "system": true
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache",
+              "system": true
+            },
+            {
+              "key": "Postman-Token",
+              "value": "ec0844bf-7fb3-45c1-b142-51e033dda76e",
+              "system": true
+            },
+            {
+              "key": "Host",
+              "value": "localhost:8000",
+              "system": true
+            },
+            {
+              "key": "Accept-Encoding",
+              "value": "gzip, deflate, br",
+              "system": true
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive",
+              "system": true
+            }
+          ],
+          "method": "GET"
+        },
+        "response": {
+          "id": "4c344345-8987-4289-bbae-c6fe6d391358",
+          "status": "OK",
+          "code": 200,
+          "header": [
+            {
+              "key": "date",
+              "value": "Sun, 05 Jul 2026 11:51:57 GMT"
+            },
+            {
+              "key": "server",
+              "value": "uvicorn"
+            },
+            {
+              "key": "content-length",
+              "value": "20"
+            },
+            {
+              "key": "content-type",
+              "value": "application/json"
+            }
+          ],
+          "stream": {
+            "type": "Buffer",
+            "data": [
+              123,
+              34,
+              115,
+              116,
+              97,
+              116,
+              117,
+              115,
+              34,
+              58,
+              34,
+              104,
+              101,
+              97,
+              108,
+              116,
+              104,
+              121,
+              34,
+              125
+            ]
+          },
+          "cookie": [],
+          "responseTime": 26,
+          "responseSize": 20
+        },
+        "id": "3f7454c6-35bb-46a2-8c12-ee61c0719daf"
+      },
+      {
+        "cursor": {
+          "ref": "e762470a-a87d-4477-8cbd-a5fd53a0d57b",
+          "length": 3,
+          "cycles": 1,
+          "position": 1,
+          "iteration": 0,
+          "httpRequestId": "26efcf1d-445e-47e1-bf73-92a5fce82608"
+        },
+        "item": {
+          "id": "908cecd7-5ab5-4308-b4f8-c492603035b1",
+          "name": "Network Status",
+          "request": {
+            "url": {
+              "protocol": "http",
+              "port": "8000",
+              "path": [
+                "network",
+                "status"
+              ],
+              "host": [
+                "localhost"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "method": "GET"
+          },
+          "response": [],
+          "event": []
+        },
+        "request": {
+          "url": {
+            "protocol": "http",
+            "port": "8000",
+            "path": [
+              "network",
+              "status"
+            ],
+            "host": [
+              "localhost"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "User-Agent",
+              "value": "PostmanRuntime/7.39.1",
+              "system": true
+            },
+            {
+              "key": "Accept",
+              "value": "*/*",
+              "system": true
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache",
+              "system": true
+            },
+            {
+              "key": "Postman-Token",
+              "value": "8b5baa5a-156b-485e-8937-e502e747244f",
+              "system": true
+            },
+            {
+              "key": "Host",
+              "value": "localhost:8000",
+              "system": true
+            },
+            {
+              "key": "Accept-Encoding",
+              "value": "gzip, deflate, br",
+              "system": true
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive",
+              "system": true
+            }
+          ],
+          "method": "GET"
+        },
+        "response": {
+          "id": "7d6d2185-7880-4540-a314-a7fa8e4d425b",
+          "status": "OK",
+          "code": 200,
+          "header": [
+            {
+              "key": "date",
+              "value": "Sun, 05 Jul 2026 11:51:57 GMT"
+            },
+            {
+              "key": "server",
+              "value": "uvicorn"
+            },
+            {
+              "key": "content-length",
+              "value": "177"
+            },
+            {
+              "key": "content-type",
+              "value": "application/json"
+            }
+          ],
+          "stream": {
+            "type": "Buffer",
+            "data": [
+              123,
+              34,
+              110,
+              101,
+              116,
+              119,
+              111,
+              114,
+              107,
+              34,
+              58,
+              34,
+              72,
+              101,
+              97,
+              108,
+              116,
+              104,
+              121,
+              34,
+              44,
+              34,
+              97,
+              112,
+              105,
+              34,
+              58,
+              34,
+              79,
+              110,
+              108,
+              105,
+              110,
+              101,
+              34,
+              44,
+              34,
+              99,
+              111,
+              110,
+              116,
+              97,
+              105,
+              110,
+              101,
+              114,
+              115,
+              95,
+              114,
+              117,
+              110,
+              110,
+              105,
+              110,
+              103,
+              34,
+              58,
+              51,
+              44,
+              34,
+              99,
+              111,
+              110,
+              116,
+              97,
+              105,
+              110,
+              101,
+              114,
+              115,
+              34,
+              58,
+              123,
+              34,
+              110,
+              103,
+              105,
+              110,
+              120,
+              34,
+              58,
+              34,
+              114,
+              117,
+              110,
+              110,
+              105,
+              110,
+              103,
+              34,
+              44,
+              34,
+              112,
+              111,
+              115,
+              116,
+              103,
+              114,
+              101,
+              115,
+              34,
+              58,
+              34,
+              114,
+              117,
+              110,
+              110,
+              105,
+              110,
+              103,
+              34,
+              44,
+              34,
+              112,
+              114,
+              111,
+              109,
+              101,
+              116,
+              104,
+              101,
+              117,
+              115,
+              34,
+              58,
+              34,
+              114,
+              117,
+              110,
+              110,
+              105,
+              110,
+              103,
+              34,
+              125,
+              44,
+              34,
+              116,
+              105,
+              109,
+              101,
+              115,
+              116,
+              97,
+              109,
+              112,
+              34,
+              58,
+              34,
+              50,
+              48,
+              50,
+              54,
+              45,
+              48,
+              55,
+              45,
+              48,
+              53,
+              84,
+              49,
+              49,
+              58,
+              53,
+              49,
+              58,
+              53,
+              56,
+              46,
+              51,
+              52,
+              53,
+              50,
+              48,
+              56,
+              34,
+              125
+            ]
+          },
+          "cookie": [],
+          "responseTime": 101,
+          "responseSize": 177
+        },
+        "id": "908cecd7-5ab5-4308-b4f8-c492603035b1"
+      },
+      {
+        "cursor": {
+          "ref": "1b070641-108f-4246-86c3-cdd22b31317d",
+          "length": 3,
+          "cycles": 1,
+          "position": 2,
+          "iteration": 0,
+          "httpRequestId": "03ea6426-9856-410b-bc74-c54dec6b87cf"
+        },
+        "item": {
+          "id": "f54176e2-91ec-4927-861c-dd22561f9699",
+          "name": "Performance Summary",
+          "request": {
+            "url": {
+              "protocol": "http",
+              "port": "8000",
+              "path": [
+                "performance",
+                "summary"
+              ],
+              "host": [
+                "localhost"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "method": "GET"
+          },
+          "response": [],
+          "event": []
+        },
+        "request": {
+          "url": {
+            "protocol": "http",
+            "port": "8000",
+            "path": [
+              "performance",
+              "summary"
+            ],
+            "host": [
+              "localhost"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "User-Agent",
+              "value": "PostmanRuntime/7.39.1",
+              "system": true
+            },
+            {
+              "key": "Accept",
+              "value": "*/*",
+              "system": true
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache",
+              "system": true
+            },
+            {
+              "key": "Postman-Token",
+              "value": "c5c8d49c-c8be-4c64-9565-42c1b84359fc",
+              "system": true
+            },
+            {
+              "key": "Host",
+              "value": "localhost:8000",
+              "system": true
+            },
+            {
+              "key": "Accept-Encoding",
+              "value": "gzip, deflate, br",
+              "system": true
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive",
+              "system": true
+            }
+          ],
+          "method": "GET"
+        },
+        "response": {
+          "id": "18fffe17-e161-46c0-9ea2-ddb4aceb6ba6",
+          "status": "OK",
+          "code": 200,
+          "header": [
+            {
+              "key": "date",
+              "value": "Sun, 05 Jul 2026 11:51:57 GMT"
+            },
+            {
+              "key": "server",
+              "value": "uvicorn"
+            },
+            {
+              "key": "content-length",
+              "value": "103"
+            },
+            {
+              "key": "content-type",
+              "value": "application/json"
+            }
+          ],
+          "stream": {
+            "type": "Buffer",
+            "data": [
+              123,
+              34,
+              97,
+              118,
+              101,
+              114,
+              97,
+              103,
+              101,
+              95,
+              108,
+              97,
+              116,
+              101,
+              110,
+              99,
+              121,
+              34,
+              58,
+              49,
+              46,
+              56,
+              51,
+              57,
+              48,
+              56,
+              48,
+              50,
+              55,
+              57,
+              57,
+              57,
+              57,
+              57,
+              57,
+              57,
+              55,
+              44,
+              34,
+              112,
+              57,
+              53,
+              95,
+              108,
+              97,
+              116,
+              101,
+              110,
+              99,
+              121,
+              34,
+              58,
+              53,
+              46,
+              55,
+              56,
+              54,
+              55,
+              52,
+              49,
+              54,
+              44,
+              34,
+              116,
+              111,
+              116,
+              97,
+              108,
+              95,
+              114,
+              101,
+              113,
+              117,
+              101,
+              115,
+              116,
+              115,
+              34,
+              58,
+              50,
+              53,
+              44,
+              34,
+              102,
+              97,
+              105,
+              108,
+              101,
+              100,
+              95,
+              114,
+              101,
+              113,
+              117,
+              101,
+              115,
+              116,
+              115,
+              34,
+              58,
+              50,
+              53,
+              125
+            ]
+          },
+          "cookie": [],
+          "responseTime": 6,
+          "responseSize": 103
+        },
+        "id": "f54176e2-91ec-4927-861c-dd22561f9699"
+      }
+    ],
+    "transfers": {
+      "responseTotal": 300
+    },
+    "failures": [],
+    "error": null
+  }
+}

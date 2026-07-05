@@ -1,0 +1,70 @@
+{
+  "info": {
+    "_postman_id": "f98317d8-ca1d-4c77-b592-dbe895d33408",
+    "name": "NetSentinel API Tests",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "49222019",
+    "_collection_link": "https://go.postman.co/collection/49222019-f98317d8-ca1d-4c77-b592-dbe895d33408?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8000/health",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "health"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Network Status",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8000/network/status",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "network",
+            "status"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Performance Summary",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8000/performance/summary",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "performance",
+            "summary"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}

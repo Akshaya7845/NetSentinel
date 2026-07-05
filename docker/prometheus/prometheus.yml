@@ -1,0 +1,9 @@
+global:
+  scrape_interval: 5s
+
+scrape_configs:
+  - job_name: "netsentinel-api"
+
+    static_configs:
+      - targets:
+          - "172.28.142.145:8000"

@@ -20,3 +20,5 @@ services:
     container_name: netsentinel-prometheus
     ports:
       - "9090:9090"
+    volumes:
+      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
