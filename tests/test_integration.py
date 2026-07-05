@@ -32,6 +32,8 @@ def test_performance_summary():
     assert "p95_latency" in data
     assert "total_requests" in data
     assert "failed_requests" in data
+    assert "packet_loss" in data
+    assert "error_rate" in data
 
 
 def test_postman_summary():

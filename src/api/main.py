@@ -23,6 +23,8 @@ from src.metrics.prometheus_metrics import (
     K6_P95_LATENCY,
     K6_TOTAL_REQUESTS,
     K6_FAILED_REQUESTS,
+    K6_PACKET_LOSS,
+    K6_ERROR_RATE,
 
     POSTMAN_TOTAL_REQUESTS,
     POSTMAN_FAILED_REQUESTS,
@@ -116,18 +118,23 @@ def get_performance_summary():
 
     summary = get_latency_summary()
 
-    # Update Prometheus Gauges
     K6_AVERAGE_LATENCY.set(summary["average_latency"])
     K6_P95_LATENCY.set(summary["p95_latency"])
     K6_TOTAL_REQUESTS.set(summary["total_requests"])
     K6_FAILED_REQUESTS.set(summary["failed_requests"])
 
+# New Week 6 Metrics
+    K6_PACKET_LOSS.set(summary["packet_loss"])
+    K6_ERROR_RATE.set(summary["error_rate"])
+
     return PerformanceSummary(
-        average_latency=summary["average_latency"],
-        p95_latency=summary["p95_latency"],
-        total_requests=summary["total_requests"],
-        failed_requests=summary["failed_requests"],
-    )
+    average_latency=summary["average_latency"],
+    p95_latency=summary["p95_latency"],
+    total_requests=summary["total_requests"],
+    failed_requests=summary["failed_requests"],
+    packet_loss=summary["packet_loss"],
+    error_rate=summary["error_rate"],
+)
 @app.get("/performance/all")
 def get_all_performance():
 

@@ -30,16 +30,26 @@ def get_k6_summary(report_name):
 
     total_requests = metrics.get("http_reqs", {}).get("count", 0)
 
-    # k6 stores the HTTP failure rate (0 to 1), not the count
+    # k6 stores the failure rate (0.0 - 1.0)
     failure_rate = metrics.get("http_req_failed", {}).get("value", 0)
 
     failed_requests = int(failure_rate * total_requests)
+
+    # Packet loss (%) = failed / total * 100
+    packet_loss = 0
+    if total_requests > 0:
+        packet_loss = (failed_requests / total_requests) * 100
+
+    # Error rate (%) = failure rate * 100
+    error_rate = failure_rate * 100
 
     return {
         "average_latency": metrics.get("http_req_duration", {}).get("avg", 0),
         "p95_latency": metrics.get("http_req_duration", {}).get("p(95)", 0),
         "total_requests": total_requests,
         "failed_requests": failed_requests,
+        "packet_loss": packet_loss,
+        "error_rate": error_rate,
     }
 
 

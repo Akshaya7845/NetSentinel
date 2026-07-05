@@ -36,6 +36,20 @@ K6_FAILED_REQUESTS = Gauge(
     "netsentinel_k6_failed_requests",
     "Failed requests reported by k6"
 )
+
+# ==========================================
+# Additional Network Metrics
+# ==========================================
+
+K6_PACKET_LOSS = Gauge(
+    "netsentinel_k6_packet_loss_percent",
+    "Packet loss percentage from k6 report"
+)
+
+K6_ERROR_RATE = Gauge(
+    "netsentinel_k6_error_rate_percent",
+    "Error rate percentage from k6 report"
+)
 from prometheus_client import Gauge
 
 POSTMAN_TOTAL_REQUESTS = Gauge(

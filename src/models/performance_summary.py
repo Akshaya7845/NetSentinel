@@ -6,3 +6,5 @@ class PerformanceSummary(BaseModel):
     p95_latency: float
     total_requests: int
     failed_requests: int
+    packet_loss: float
+    error_rate: float
