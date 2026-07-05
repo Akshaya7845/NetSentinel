@@ -3,12 +3,11 @@ import docker
 
 def get_container_status():
     """
-    Returns the status of all running NetSentinel containers.
+    Returns the status of all NetSentinel containers.
+
+    If Docker is unavailable (for example in GitHub Actions),
+    return a default status instead of raising an exception.
     """
-
-    client = docker.from_env()
-
-    containers = client.containers.list()
 
     status = {
         "nginx": "stopped",
@@ -16,22 +15,33 @@ def get_container_status():
         "prometheus": "stopped"
     }
 
-    running_count = 0
+    try:
+        client = docker.from_env()
+        containers = client.containers.list()
 
-    for container in containers:
+        running_count = 0
 
-        running_count += 1
+        for container in containers:
 
-        if "netsentinel-web" in container.name:
-            status["nginx"] = "running"
+            running_count += 1
 
-        elif "netsentinel-db" in container.name:
-            status["postgres"] = "running"
+            if "netsentinel-web" in container.name:
+                status["nginx"] = "running"
 
-        elif "netsentinel-prometheus" in container.name:
-            status["prometheus"] = "running"
+            elif "netsentinel-db" in container.name:
+                status["postgres"] = "running"
 
-    return {
-        "containers_running": running_count,
-        "container_status": status
-    }
+            elif "netsentinel-prometheus" in container.name:
+                status["prometheus"] = "running"
+
+        return {
+            "containers_running": running_count,
+            "container_status": status
+        }
+
+    except Exception:
+        # Docker is unavailable (e.g., GitHub Actions)
+        return {
+            "containers_running": 0,
+            "container_status": status
+        }
