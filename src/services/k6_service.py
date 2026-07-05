@@ -28,12 +28,21 @@ def get_k6_summary(report_name):
 
     metrics = report.get("metrics", {})
 
+    total_requests = metrics.get("http_reqs", {}).get("count", 0)
+
+    # k6 stores the HTTP failure rate (0 to 1), not the count
+    failure_rate = metrics.get("http_req_failed", {}).get("value", 0)
+
+    failed_requests = int(failure_rate * total_requests)
+
     return {
-        "average_latency": metrics.get("http_req_duration", {}).get("avg"),
-        "p95_latency": metrics.get("http_req_duration", {}).get("p(95)"),
-        "total_requests": metrics.get("http_reqs", {}).get("count"),
-        "failed_requests": metrics.get("http_req_failed", {}).get("fails"),
+        "average_latency": metrics.get("http_req_duration", {}).get("avg", 0),
+        "p95_latency": metrics.get("http_req_duration", {}).get("p(95)", 0),
+        "total_requests": total_requests,
+        "failed_requests": failed_requests,
     }
+
+
 def get_smoke_summary():
     return get_k6_summary("smoke-test-results.json")
 

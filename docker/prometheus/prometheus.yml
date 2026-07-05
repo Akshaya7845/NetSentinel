@@ -4,6 +4,8 @@ global:
 scrape_configs:
   - job_name: "netsentinel-api"
 
+    metrics_path: /metrics
+
     static_configs:
       - targets:
-          - "172.28.142.145:8000"
+          - "localhost:8000"

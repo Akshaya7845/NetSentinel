@@ -2,16 +2,16 @@
     "login_api": {
         "status": "Reachable",
         "status_code": 200,
-        "response_time_ms": 4.12
+        "response_time_ms": 2.53
     },
     "product_api": {
         "status": "Reachable",
         "status_code": 200,
-        "response_time_ms": 1.69
+        "response_time_ms": 4.09
     },
     "payment_api": {
         "status": "Reachable",
         "status_code": 200,
-        "response_time_ms": 2.59
+        "response_time_ms": 2.64
     }
 }
