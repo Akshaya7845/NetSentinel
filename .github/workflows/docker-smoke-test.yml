@@ -34,6 +34,7 @@ jobs:
           test -f docker-compose.yml
           test -d monitoring
           test -d tests
+          test -d src/analytics
           echo "Project structure verified."
 
       - name: Verify Test Files
@@ -41,6 +42,7 @@ jobs:
           test -f tests/connectivity_test.py
           test -f tests/test_unit.py
           test -f tests/test_integration.py
+          test -f tests/test_analysis.py
           echo "All test files verified."
 
       - name: Verify k6 Scripts
@@ -84,6 +86,27 @@ jobs:
         run: |
           pytest tests/test_integration.py -v
 
+      # ----------------------------
+      # Week 7 Validation
+      # ----------------------------
+
+      - name: Run Analytics Tests
+        run: |
+          pytest tests/test_analysis.py -v
+
+      - name: Generate Analytics Charts
+        run: |
+          python test_chart.py
+
+      - name: Verify Generated Charts
+        run: |
+          test -f monitoring/reports/charts/average_latency.png
+          test -f monitoring/reports/charts/p95_latency.png
+          test -f monitoring/reports/charts/total_requests.png
+          test -f monitoring/reports/charts/packet_loss.png
+          test -f monitoring/reports/charts/error_rate.png
+          echo "All analytics charts generated successfully."
+
       - name: NetSentinel Validation Complete
         run: |
-          echo "Week 5 and Week 6 validation completed successfully!"
+          echo "Week 5, Week 6 and Week 7 validation completed successfully!"
