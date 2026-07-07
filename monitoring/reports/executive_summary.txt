@@ -1,11 +1,12 @@
 **Executive Performance Summary**
 
-*   **Overall Health:** The network demonstrates excellent reliability and stability, with zero packet loss, errors, or failed requests.
-*   **Consistent Network Latency:** Average network latency is stable at 32.04 ms, showing minimal variance between minimum and maximum values.
-*   **P95 Latency Observation:** A key observation is the P95 latency of 45.48 ms, indicating that 5% of requests experience notably higher network delays.
-*   **Application Performance Gap:** The Postman average response time of 68.33 ms is significantly higher than the NetSentinel network latency, suggesting application-level processing is the primary contributor to end-to-end delay.
-*   **Recommendation 1:** Investigate the root cause of the elevated P95 latency to identify and optimize specific network paths or services.
-*   **Recommendation 2:** Implement comprehensive Application Performance Monitoring (APM) to profile and pinpoint application-level bottlenecks contributing to the higher Postman response times.
-*   **Recommendation 3:** Establish performance baselines for critical application transactions and continuously monitor them to ensure consistent end-user experience.
+*   Overall network health is good, demonstrating excellent reliability and generally low latency.
+*   Zero failed requests, packet loss, or error rates were recorded across 3783 total requests, indicating robust operational stability.
+*   Average network latency is stable at 32.04 ms, with minimal fluctuation between minimum (29.84 ms) and maximum (35.29 ms).
+*   A key observation is the P95 Latency of 45.48 ms, which is significantly higher than both the average and reported maximum, indicating tail latency for 5% of requests.
+*   External Postman monitoring reports an average response time of 68.33 ms, considerably higher than internal network latency metrics, suggesting potential application processing overhead or external network path contributions.
+*   **Recommendation 1:** Investigate the discrepancy between P95 Latency and the reported Maximum Latency for data integrity or specific event analysis.
+*   **Recommendation 2:** Analyze Postman response time components to pinpoint the precise source of additional latency (e.g., application processing vs. external network path).
+*   **Recommendation 3:** Implement continuous monitoring for P95 latency trends to proactively address potential tail latency degradation.
 
-While network infrastructure is robust, optimizing application performance is crucial for improving overall user experience.
+The network is performing reliably, but further investigation into tail latencies and external response time components is recommended to optimize overall service delivery.

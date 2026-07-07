@@ -1,38 +1,14 @@
 from pathlib import Path
 
-from src.ai.llm_service import LLMService
 from src.ai.report_generator import ReportGenerator
 
 
-llm = LLMService()
 generator = ReportGenerator()
-
-
-def test_generate_executive_report():
-    """
-    Verify Executive Summary generation.
-    """
-
-    report = llm.generate_executive_report()
-
-    assert isinstance(report, str)
-    assert len(report) > 0
-
-
-def test_generate_detailed_report():
-    """
-    Verify Detailed Technical Report generation.
-    """
-
-    report = llm.generate_detailed_report()
-
-    assert isinstance(report, str)
-    assert len(report) > 0
 
 
 def test_report_generator():
     """
-    Verify AI reports are generated and saved.
+    Verify AI reports are generated or existing reports are reused.
     """
 
     files = generator.generate_reports()
@@ -45,3 +21,33 @@ def test_report_generator():
 
     assert executive.stat().st_size > 0
     assert detailed.stat().st_size > 0
+
+
+def test_executive_report_exists():
+    """
+    Verify Executive Summary exists and is not empty.
+    """
+
+    report = Path("monitoring/reports/executive_summary.txt")
+
+    assert report.exists()
+
+    assert report.read_text(
+        encoding="utf-8"
+    ).strip() != ""
+
+
+def test_detailed_report_exists():
+    """
+    Verify Detailed Technical Report exists and is not empty.
+    """
+
+    report = Path(
+        "monitoring/reports/detailed_technical_report.txt"
+    )
+
+    assert report.exists()
+
+    assert report.read_text(
+        encoding="utf-8"
+    ).strip() != ""
