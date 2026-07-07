@@ -1,0 +1,43 @@
+
+NetSentinel Scenario Report
+
+Scenario:
+High Error Rate
+
+Status:
+AI recommendation unavailable because the
+Gemini API quota has been exceeded.
+
+Scenario Metrics
+
+Average Latency:
+95.2 ms
+
+Maximum Latency:
+180.4 ms
+
+Minimum Latency:
+60.5 ms
+
+P95 Latency:
+240.8 ms
+
+Total Requests:
+5000
+
+Failed Requests:
+450
+
+Packet Loss:
+4.8 %
+
+Error Rate:
+9.2 %
+
+Postman Response Time:
+310.6 ms
+
+Recommendation
+
+Retry AI analysis after the Gemini
+quota has been reset.

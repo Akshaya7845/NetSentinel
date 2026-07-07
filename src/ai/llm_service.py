@@ -26,6 +26,15 @@ class LLMService:
 
         self.prompt_builder = PromptBuilder()
 
+    def generate_text(self, prompt):
+        """
+        Generates AI output for any custom prompt.
+        """
+
+        response = self.llm.invoke(prompt)
+
+        return response.content
+
     def generate_executive_report(self):
         """
         Generates the Executive Summary.
@@ -33,9 +42,7 @@ class LLMService:
 
         prompt = self.prompt_builder.build_executive_prompt()
 
-        response = self.llm.invoke(prompt)
-
-        return response.content
+        return self.generate_text(prompt)
 
     def generate_detailed_report(self):
         """
@@ -44,6 +51,4 @@ class LLMService:
 
         prompt = self.prompt_builder.build_detailed_prompt()
 
-        response = self.llm.invoke(prompt)
-
-        return response.content
+        return self.generate_text(prompt)

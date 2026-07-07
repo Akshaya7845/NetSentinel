@@ -1,0 +1,16 @@
+{
+    "scenario": "High Latency",
+
+    "average_latency": 320.8,
+    "maximum_latency": 590.2,
+    "minimum_latency": 180.5,
+    "p95_latency": 650.9,
+
+    "total_requests": 5000,
+    "failed_requests": 35,
+
+    "packet_loss": 1.5,
+    "error_rate": 0.7,
+
+    "postman_response_time": 720.4
+}

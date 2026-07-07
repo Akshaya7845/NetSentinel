@@ -54,6 +54,7 @@ jobs:
           test -f tests/test_integration.py
           test -f tests/test_analysis.py
           test -f tests/test_ai.py
+          test -f tests/test_scenario_runner.py
           echo "All test files verified."
 
       - name: Verify k6 Scripts
@@ -131,6 +132,12 @@ jobs:
         run: |
           pytest tests/test_ai.py -v
 
+      - name: Run Scenario Validation
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          pytest tests/test_scenario_runner.py -v
+
       - name: Generate AI Reports
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -143,11 +150,15 @@ jobs:
           test -f monitoring/reports/detailed_technical_report.txt
           echo "AI reports generated successfully."
 
-      # ==========================================================
-      # Coverage Report
-      # ==========================================================
+      - name: Verify Scenario Reports
+        run: |
+          test -f monitoring/reports/scenario_reports/healthy_network_report.txt
+          test -f monitoring/reports/scenario_reports/high_latency_report.txt
+          test -f monitoring/reports/scenario_reports/high_error_rate_report.txt
+          echo "Scenario reports generated successfully."
 
-            # ==========================================================
+
+      # ==========================================================
       # Coverage Report
       # ==========================================================
 
