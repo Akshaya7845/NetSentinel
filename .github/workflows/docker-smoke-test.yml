@@ -147,7 +147,13 @@ jobs:
       # Coverage Report
       # ==========================================================
 
+            # ==========================================================
+      # Coverage Report
+      # ==========================================================
+
       - name: Generate Coverage Report
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           pytest tests/ \
             --cov=src \

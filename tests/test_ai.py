@@ -3,13 +3,13 @@ from pathlib import Path
 from src.ai.report_generator import ReportGenerator
 
 
-generator = ReportGenerator()
-
-
 def test_report_generator():
     """
-    Verify AI reports are generated or existing reports are reused.
+    Verify AI reports are generated or
+    existing reports are reused.
     """
+
+    generator = ReportGenerator()
 
     files = generator.generate_reports()
 
@@ -25,10 +25,13 @@ def test_report_generator():
 
 def test_executive_report_exists():
     """
-    Verify Executive Summary exists and is not empty.
+    Verify Executive Summary exists
+    and is not empty.
     """
 
-    report = Path("monitoring/reports/executive_summary.txt")
+    report = Path(
+        "monitoring/reports/executive_summary.txt"
+    )
 
     assert report.exists()
 
@@ -39,7 +42,8 @@ def test_executive_report_exists():
 
 def test_detailed_report_exists():
     """
-    Verify Detailed Technical Report exists and is not empty.
+    Verify Detailed Technical Report
+    exists and is not empty.
     """
 
     report = Path(
