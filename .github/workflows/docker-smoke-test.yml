@@ -35,6 +35,7 @@ jobs:
           test -d monitoring
           test -d tests
           test -d src/analytics
+          test -d src/ai
           echo "Project structure verified."
 
       - name: Verify Test Files
@@ -43,6 +44,7 @@ jobs:
           test -f tests/test_unit.py
           test -f tests/test_integration.py
           test -f tests/test_analysis.py
+          test -f tests/test_ai.py
           echo "All test files verified."
 
       - name: Verify k6 Scripts
@@ -107,6 +109,32 @@ jobs:
           test -f monitoring/reports/charts/error_rate.png
           echo "All analytics charts generated successfully."
 
+      # ----------------------------
+      # Week 8 Validation
+      # ----------------------------
+
+      - name: Run AI Tests
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          pytest tests/test_ai.py -v
+
+      - name: Generate AI Reports
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          python test_report_generator.py
+
+      - name: Verify AI Reports
+        run: |
+          test -f monitoring/reports/executive_summary.txt
+          test -f monitoring/reports/detailed_technical_report.txt
+          echo "AI reports generated successfully."
+
+      # ----------------------------
+      # Validation Complete
+      # ----------------------------
+
       - name: NetSentinel Validation Complete
         run: |
-          echo "Week 5, Week 6 and Week 7 validation completed successfully!"
+          echo "Week 5, Week 6, Week 7 and Week 8 validation completed successfully!"

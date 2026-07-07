@@ -14,6 +14,9 @@ from src.services.k6_service import (
 from src.models.postman_summary import PostmanSummary
 from src.services.postman_service import get_postman_summary
 from src.services.network_watcher_service import check_connectivity
+from pathlib import Path
+
+from src.ai.report_generator import ReportGenerator
 
 from src.metrics.prometheus_metrics import (
     REQUEST_COUNT,
@@ -166,3 +169,40 @@ def get_postman_summary_api():
 @app.get("/networkwatcher/summary")
 def get_networkwatcher_summary():
     return check_connectivity()
+
+@app.get("/ai/executive-summary")
+def get_executive_summary():
+    """
+    Returns the latest Executive Summary.
+    """
+
+    generator = ReportGenerator()
+
+    generator.generate_reports()
+
+    report = Path(
+        "monitoring/reports/executive_summary.txt"
+    )
+
+    return {
+        "report": report.read_text(encoding="utf-8")
+    }
+
+
+@app.get("/ai/detailed-report")
+def get_detailed_report():
+    """
+    Returns the latest Detailed Technical Report.
+    """
+
+    generator = ReportGenerator()
+
+    generator.generate_reports()
+
+    report = Path(
+        "monitoring/reports/detailed_technical_report.txt"
+    )
+
+    return {
+        "report": report.read_text(encoding="utf-8")
+    }
