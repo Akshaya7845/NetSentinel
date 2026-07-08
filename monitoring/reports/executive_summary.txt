@@ -1,12 +1,13 @@
 **Executive Performance Summary**
 
-*   Overall network health is good, demonstrating excellent reliability and generally low latency.
-*   Zero failed requests, packet loss, or error rates were recorded across 3783 total requests, indicating robust operational stability.
-*   Average network latency is stable at 32.04 ms, with minimal fluctuation between minimum (29.84 ms) and maximum (35.29 ms).
-*   A key observation is the P95 Latency of 45.48 ms, which is significantly higher than both the average and reported maximum, indicating tail latency for 5% of requests.
-*   External Postman monitoring reports an average response time of 68.33 ms, considerably higher than internal network latency metrics, suggesting potential application processing overhead or external network path contributions.
-*   **Recommendation 1:** Investigate the discrepancy between P95 Latency and the reported Maximum Latency for data integrity or specific event analysis.
-*   **Recommendation 2:** Analyze Postman response time components to pinpoint the precise source of additional latency (e.g., application processing vs. external network path).
-*   **Recommendation 3:** Implement continuous monitoring for P95 latency trends to proactively address potential tail latency degradation.
+*   **Overall Health & Reliability:** The network exhibits excellent health and reliability with 0 failed requests, 0% packet loss, and 0% error rate across 3783 total requests.
+*   **Stable Core Latency:** Average latency is stable at 32.04 ms, with minimal variance between minimum (29.84 ms) and maximum (35.29 ms).
+*   **Tail Latency Concern:** P95 latency of 45.48 ms is notably higher than the average, indicating 5% of requests experience significantly slower response times.
+*   **External Performance Discrepancy:** Postman's average response time (68.33 ms) is considerably higher than internal metrics, suggesting external path or application layer delays.
 
-The network is performing reliably, but further investigation into tail latencies and external response time components is recommended to optimize overall service delivery.
+**Recommendations:**
+1.  Investigate the elevated P95 latency to optimize performance for the slowest requests.
+2.  Analyze the internal vs. Postman response time discrepancy to pinpoint external bottlenecks.
+3.  Implement continuous monitoring for P95 latency and external response trends.
+
+While core reliability is excellent, addressing tail latency and external performance discrepancies will further enhance user experience.
