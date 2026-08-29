@@ -289,9 +289,14 @@ jobs:
               echo "FastAPI started successfully."
               break
             fi
-
             sleep 2
           done
+
+          if ! curl -sf http://localhost:8000/health > /dev/null; then
+            echo "FastAPI failed to start."
+            cat uvicorn.log
+            exit 1
+          fi
 
           echo "FastAPI logs:"
           cat uvicorn.log
@@ -398,6 +403,7 @@ jobs:
           echo "Waiting for Prometheus and Grafana..."
 
           for i in {1..30}; do
+
             PROMETHEUS_OK=false
             GRAFANA_OK=false
 
@@ -417,17 +423,92 @@ jobs:
             sleep 2
           done
 
+          if ! curl -sf http://localhost:9090/-/ready > /dev/null; then
+            echo "Prometheus failed to start."
+            docker compose logs prometheus
+            exit 1
+          fi
+
+          if ! curl -sf http://localhost:3000/api/health > /dev/null; then
+            echo "Grafana failed to start."
+            docker compose logs grafana
+            exit 1
+          fi
+
+      # ----------------------------------------------------------
+      # Verify Prometheus
+      # ----------------------------------------------------------
+
       - name: Verify Prometheus Health
         run: |
           curl --fail http://localhost:9090/-/ready
           echo
           echo "Prometheus is healthy."
 
+      # ----------------------------------------------------------
+      # Verify Grafana
+      # ----------------------------------------------------------
+
       - name: Verify Grafana Health
         run: |
           curl --fail http://localhost:3000/api/health
           echo
           echo "Grafana is healthy."
+
+      # ----------------------------------------------------------
+      # Populate NetSentinel Prometheus Metrics
+      # ----------------------------------------------------------
+
+      - name: Populate Prometheus Metrics
+        run: |
+          echo "Calling NetSentinel performance endpoint..."
+          curl --fail http://localhost:8000/performance/summary
+
+          echo
+          echo "Waiting for Prometheus to scrape metrics..."
+          sleep 10
+
+      # ----------------------------------------------------------
+      # Verify NetSentinel Metrics
+      # ----------------------------------------------------------
+
+      - name: Verify NetSentinel Latency Metric
+        run: |
+          RESPONSE=$(curl -sf \
+            "http://localhost:9090/api/v1/query?query=netsentinel_k6_average_latency_ms")
+
+          echo "$RESPONSE"
+
+          echo "$RESPONSE" | grep -q '"status":"success"'
+          echo "$RESPONSE" | grep -q '"result":\['
+
+          if echo "$RESPONSE" | grep -q '"result":\[\]'; then
+            echo "ERROR: NetSentinel latency metric was not found."
+            exit 1
+          fi
+
+          echo "NetSentinel latency metric verified."
+
+      - name: Verify NetSentinel Failed Requests Metric
+        run: |
+          RESPONSE=$(curl -sf \
+            "http://localhost:9090/api/v1/query?query=netsentinel_k6_failed_requests")
+
+          echo "$RESPONSE"
+
+          echo "$RESPONSE" | grep -q '"status":"success"'
+          echo "$RESPONSE" | grep -q '"result":\['
+
+          if echo "$RESPONSE" | grep -q '"result":\[\]'; then
+            echo "ERROR: NetSentinel failed requests metric was not found."
+            exit 1
+          fi
+
+          echo "NetSentinel failed requests metric verified."
+
+      # ----------------------------------------------------------
+      # Verify Grafana Dashboard
+      # ----------------------------------------------------------
 
       - name: Verify Grafana Dashboard File
         run: |
@@ -448,6 +529,10 @@ jobs:
 
           print("Grafana dashboard JSON is valid.")
           PY
+
+      # ----------------------------------------------------------
+      # Run Grafana Tests
+      # ----------------------------------------------------------
 
       - name: Run Grafana Tests
         run: |
@@ -474,6 +559,10 @@ jobs:
           test -f monitoring/reports/charts/packet_loss.png
           test -f monitoring/reports/charts/error_rate.png
           echo "Monitoring charts verified."
+
+      # ----------------------------------------------------------
+      # Week 11 Evidence
+      # ----------------------------------------------------------
 
       - name: Verify Week 11 Evidence
         run: |
@@ -539,12 +628,12 @@ jobs:
         run: |
           docker compose down
 
-      - name: Show FastAPI Logs on Failure
+      - name: Show Logs on Failure
         if: failure()
         run: |
-          echo "=============================="
+          echo "======================================"
           echo "FastAPI Logs"
-          echo "=============================="
+          echo "======================================"
 
           if [ -f uvicorn.log ]; then
             cat uvicorn.log
@@ -552,15 +641,15 @@ jobs:
             echo "No uvicorn.log found."
           fi
 
-          echo "=============================="
+          echo "======================================"
           echo "Docker Containers"
-          echo "=============================="
+          echo "======================================"
 
           docker ps -a
 
-          echo "=============================="
+          echo "======================================"
           echo "Docker Compose Logs"
-          echo "=============================="
+          echo "======================================"
 
           docker compose logs --no-color || true
 
