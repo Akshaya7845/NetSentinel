@@ -1,73 +1,93 @@
-**1. Overall Health**
+**Senior Network Performance Engineer – Incident Report**  
+*Scenario: High Latency – 5 000 requests, 35 failures, 1.5 % packet loss, 0.7 % error rate*  
 
-| Metric | Value | Threshold (Industry‑Standard) | Status |
-|--------|-------|------------------------------|--------|
-| Avg Latency | **320.8 ms** | < 200 ms (good) | **High** |
-| Max Latency | **590.2 ms** | < 400 ms | **High** |
-| Min Latency | **180.5 ms** | > 0 ms | **Acceptable** |
-| P95 Latency | **650.9 ms** | < 500 ms | **High** |
-| Total Requests | 5,000 | — | — |
-| Failed Requests | **35** | < 1 % | **High** |
-| Packet Loss | **1.5 %** | < 0.5 % | **High** |
-| Error Rate | **0.7 %** | < 0.2 % | **High** |
-| Postman Response Time | **720.4 ms** | < 400 ms | **High** |
-
-**Summary:**  
-The system is **unhealthy**. Latency is well above acceptable limits, packet loss and error rates are elevated, and the Postman response time confirms the same trend. The failure rate (0.7 %) is more than three times the industry‑acceptable threshold.
+| Metric | Value | Threshold (Industry‑Typical) | Comment |
+|--------|-------|------------------------------|---------|
+| Avg Latency | **320.8 ms** | < 200 ms | Above target |
+| Max Latency | 590.2 ms | < 500 ms | Outlier |
+| Min Latency | 180.5 ms | – | Within range |
+| P95 Latency | **650.9 ms** | < 500 ms | Heavy tail |
+| Total Requests | 5 000 | – | Sample size |
+| Failed Requests | 35 | < 1 % | Matches error rate |
+| Packet Loss | **1.5 %** | < 0.5 % | Significant |
+| Error Rate | **0.7 %** | < 0.5 % | Matches failures |
+| Postman RT | 720.4 ms | – | Client‑side overhead |
 
 ---
 
-**2. Root Cause Analysis**
+## 1. Overall Health
 
-| Layer | Likely Cause | Evidence |
-|-------|--------------|----------|
-| **Transport / Network** | **Packet loss (1.5 %)** causing retransmissions and timeouts. | Packet loss directly inflates latency; retransmissions add ~200 ms per lost packet. |
-| **Routing / ISP** | **Sub‑optimal routing path** or congested transit links. | Max latency 590 ms and P95 650 ms suggest a few outlier paths with high round‑trip times. |
-| **Application Server** | **CPU/memory contention** or **database bottlenecks**. | 35 failed requests and 0.7 % error rate indicate server‑side timeouts or resource exhaustion. |
-| **Load Balancer / CDN** | **Mis‑configured health checks** or **uneven traffic distribution**. | Postman response time (720 ms) is higher than average, implying that certain backend nodes are overloaded. |
-| **Client Side** | **Geographic dispersion** of users. | If users are globally distributed, latency variance is expected; however, the high P95 indicates that even “local” users experience delays. |
-
-**Primary Root Cause:**  
-The combination of **network packet loss** and **congested routing paths** is the main driver of latency. Secondary contributors are **backend resource contention** and **load‑balancing inefficiencies**.
+| Category | Status | Rationale |
+|----------|--------|-----------|
+| **Availability** | **Good** | 99.3 % uptime (5 000 – 35 = 4 965 successful requests) |
+| **Performance** | **Poor** | Avg latency 320 ms, P95 651 ms, max 590 ms – all above typical SLA |
+| **Reliability** | **Acceptable** | Error rate 0.7 % (matches failures) – within 1 % but above 0.5 % target |
+| **Network** | **Degraded** | 1.5 % packet loss is high; likely causing retransmissions and latency spikes |
+| **Overall** | **Needs Immediate Attention** | Latency and packet loss exceed acceptable thresholds; must be addressed to meet SLA |
 
 ---
 
-**3. Performance Analysis**
+## 2. Root Cause Analysis
 
-| Metric | Interpretation |
-|--------|----------------|
-| **Avg Latency 320.8 ms** | Indicates that most requests are taking 3× the target. |
-| **Max Latency 590.2 ms** | Outliers likely due to routing storms or server overload. |
-| **P95 Latency 650.9 ms** | 95 % of traffic is slower than 650 ms; only 5 % meets SLA. |
-| **Failed Requests 35 / 5,000 (0.7 %)** | High failure rate suggests timeouts or server errors. |
-| **Packet Loss 1.5 %** | Exceeds typical Ethernet/ISP limits; each lost packet triggers retransmission, adding ~200 ms. |
-| **Error Rate 0.7 %** | Likely due to 5xx responses or client‑side timeouts. |
-| **Postman Response 720.4 ms** | Confirms that manual testing sees similar delays; not a tooling artifact. |
+### 2.1 Network‑Layer Issues
+1. **Packet Loss (1.5 %)**  
+   * Causes retransmissions → latency spikes.  
+   * Likely due to congested links, faulty NICs, or mis‑configured QoS.
+2. **Path MTU / Fragmentation**  
+   * Large packets may be fragmented; reassembly adds delay.
+3. **Routing Instability**  
+   * Flapping routes or sub‑optimal BGP paths can increase hop count.
 
-**Key Findings:**
+### 2.2 Transport‑Layer Issues
+1. **TCP Retransmissions**  
+   * Packet loss triggers retransmissions; each adds ~RTT.  
+   * 1.5 % loss → ~1–2 retransmissions per packet on average.
+2. **Congestion Window Shrink**  
+   * Loss triggers cwnd reduction → slower throughput.
 
-1. **Latency is dominated by network path issues** – packet loss and high RTTs.
-2. **Backend resources are under strain** – evidenced by failures and error spikes.
-3. **SLA compliance is poor** – only ~95 % of traffic meets the 650 ms threshold, far below typical 99.9 % SLA.
+### 2.3 Application‑Layer Issues
+1. **Server Overload**  
+   * High CPU/Memory usage can delay request handling.  
+   * 5 000 requests over a short window may saturate the backend.
+2. **Inefficient Queries / Blocking**  
+   * Long DB calls or locks increase response time.
+3. **Large Payloads**  
+   * 720 ms Postman RT suggests large payloads or slow serialization.
+
+### 2.4 External Factors
+1. **Client Environment**  
+   * Postman RT higher than server‑side latency indicates client‑side network or processing overhead.
+2. **Third‑Party Services**  
+   * If the application calls external APIs, their latency contributes to overall response time.
 
 ---
 
-**4. Optimization Recommendations**
+## 3. Performance Analysis
 
-| Area | Recommendation | Rationale |
-|------|----------------|-----------|
-| **Network Path** | • Run traceroute/Path MTU discovery from all client regions.<br>• Engage with upstream ISPs to identify congested links.<br>• Deploy BGP route reflectors or use a CDN to shorten paths. | Reduces RTT and packet loss. |
-| **Packet Loss Mitigation** | • Enable ECN (Explicit Congestion Notification) on routers.<br>• Increase MTU to avoid fragmentation.<br>• Implement TCP Fast Open or QUIC for faster handshakes. | Lowers retransmission overhead. |
-| **Load Balancing** | • Switch to a **dynamic, weighted round‑robin** or **least‑conn** algorithm.<br>• Add health‑check thresholds that detect high latency before marking a node unhealthy.<br>• Scale horizontally (add more instances). | Prevents over‑loading of single nodes. |
-| **Backend Performance** | • Profile CPU/memory usage; add auto‑scaling rules.<br>• Optimize database queries (indexes, caching).<br>• Use connection pooling and keep‑alive. | Reduces server‑side latency and failures. |
-| **Caching** | • Implement CDN edge caching for static assets.<br>• Use HTTP/2 server push or gRPC for efficient payloads. | Cuts round‑trip time for repeat requests. |
-| **Monitoring & Alerting** | • Add per‑region latency dashboards.<br>• Set alerts for packet loss > 0.5 % and latency > 400 ms.<br>• Correlate logs with network metrics. | Enables proactive issue detection. |
-| **Testing** | • Run synthetic traffic from all regions.<br>• Perform load tests to identify breaking points. | Validates improvements before production rollout. |
+| Observation | Implication |
+|-------------|-------------|
+| **Avg Latency 320 ms vs. P95 651 ms** | 5 % of requests are > 650 ms → heavy tail. |
+| **Packet Loss 1.5 %** | Roughly 1–2 retransmissions per packet → adds ~200–400 ms per request. |
+| **Failed Requests 35 (0.7 %)** | Correlates with error rate; likely due to timeouts or connection resets. |
+| **Postman RT 720 ms** | Client‑side overhead or additional hops; indicates that the server latency is likely lower than Postman RT. |
+| **Max Latency 590 ms** | Outlier but still within P95; indicates occasional severe congestion or server stalls. |
+
+**Trend Insight**  
+- The latency distribution is skewed; the mean is inflated by a small number of very high‑latency requests.  
+- Packet loss is the primary driver of retransmissions, which in turn inflates the tail.
 
 ---
 
-**5. Final Conclusion**
+## 4. Optimization Recommendations
 
-The monitoring snapshot reveals a **critical performance degradation** primarily caused by **network packet loss and sub‑optimal routing**, compounded by **backend resource contention**. The system is currently **not meeting SLA expectations** and is at risk of further failures under load.
+### 4.1 Immediate Network Fixes
+| Action | Tool / Command | Expected Impact |
+|--------|----------------|-----------------|
+| **Run traceroute / MTR** | `mtr -r -c 100 <destination>` | Identify hops with high loss or latency. |
+| **Check NIC statistics** | `ethtool -S <iface>` | Detect link errors or CRC issues. |
+| **Verify MTU** | `ping -M do -s 1472 <dest>` | Ensure no fragmentation. |
+| **Inspect QoS / ACLs** | `show policy-map` (Cisco) | Remove mis‑configured bandwidth limits. |
+| **Check BGP / OSPF** | `show ip bgp` / `show ip ospf neighbor` | Resolve flapping routes. |
 
-By executing the recommended actions—optimizing network paths, reducing packet loss, refining load‑balancing, scaling backend resources, and enhancing caching—the latency should drop below 200 ms for the majority of requests, packet loss should fall below 0.5 %, and error/failure rates should be reduced to < 0.2 %. Continuous monitoring and iterative tuning will be essential to sustain these improvements.
+### 4.2 Transport‑Layer Tuning
+| Parameter | Suggested Value

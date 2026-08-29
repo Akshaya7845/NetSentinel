@@ -1,12 +1,10 @@
-**Executive Performance Summary**
+- Overall health: zero failures, 0 % packet loss, 0 % error rate.  
+- Average latency 32.04 ms, max 35.29 ms, min 29.84 ms—well within acceptable limits.  
+- P95 latency 45.48 ms shows occasional spikes but remains below critical thresholds.  
+- Postman average response 68.33 ms exceeds network latency, indicating application‑level overhead.  
+- No failed requests out of 3,783, confirming reliability.  
+- Minor observation: slight latency increase in the 95th percentile; monitor for trend.  
+- Recommendation: Implement application‑level caching to reduce response times.  
+- Recommendation: 1) Monitor P95 latency with alerts; 2) Perform load testing with Postman to pinpoint bottlenecks; 3) Optimize server configuration for better throughput.  
 
-- **Overall Health:** The network is in excellent condition – zero failed requests, 0 % packet loss, and 0 % error rate.  
-- **Latency Profile:** Average latency 32 ms, with a tight range (29.8 – 35.3 ms) and a P95 of 45.5 ms, well below typical SLA thresholds.  
-- **Request Volume:** 3,783 total requests processed without any failures, indicating robust throughput.  
-- **Postman Response:** Average response time 68 ms, noticeably higher than network latency, suggesting server‑side processing is the primary contributor.  
-- **No Critical Issues:** All key metrics are within acceptable limits; no immediate action required.  
-- **Recommendation 1:** Continue monitoring P95 latency to pre‑empt any future drift.  
-- **Recommendation 2:** Investigate server‑side optimizations (caching, query tuning) to reduce Postman response times.  
-- **Recommendation 3:** Schedule quarterly health reviews to maintain zero‑failure status.  
-
-**Conclusion:** The network remains healthy and reliable, with only minor opportunities for server‑side performance gains.
+Overall, the network demonstrates robust performance with minimal latency and zero errors, ensuring reliable service delivery.
