@@ -75,7 +75,6 @@
 
 #       - name: Start FastAPI Server
 #         env:
-#           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 #         run: |
 #           nohup uvicorn src.api.main:app --host 0.0.0.0 --port 8000 > uvicorn.log 2>&1 &
 #           sleep 15
@@ -128,19 +127,16 @@
 
 #       - name: Run AI Tests
 #         env:
-#           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 #         run: |
 #           pytest tests/test_ai.py -v
 
 #       - name: Run Scenario Validation
 #         env:
-#           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 #         run: |
 #           pytest tests/test_scenario_runner.py -v
 
 #       - name: Generate AI Reports
 #         env:
-#           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 #         run: |
 #           python test_report_generator.py
 
@@ -164,7 +160,6 @@
 
 #       - name: Generate Coverage Report
 #         env:
-#           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 #         run: |
 #           pytest tests/ \
 #             --cov=src \
@@ -205,7 +200,6 @@ on:
   push:
     branches:
       - main
-
   workflow_dispatch:
 
 jobs:
@@ -215,22 +209,16 @@ jobs:
     steps:
 
       # ==========================================================
-      # Checkout Repository
+      # Repository Setup
       # ==========================================================
 
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-
-      # ==========================================================
-      # Python Setup
-      # ==========================================================
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-
 
       # ==========================================================
       # Install Dependencies
@@ -240,8 +228,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install pytest pytest-cov uvicorn requests
-
+          pip install pytest pytest-cov uvicorn requests groq
 
       # ==========================================================
       # Week 5 Validation
@@ -254,8 +241,8 @@ jobs:
           test -d tests
           test -d src/analytics
           test -d src/ai
+          test -d grafana
           echo "Project structure verified."
-
 
       - name: Verify Test Files
         run: |
@@ -268,7 +255,6 @@ jobs:
           test -f tests/test_grafana.py
           echo "All test files verified."
 
-
       - name: Verify k6 Scripts
         run: |
           test -f monitoring/k6/smoke-test.js
@@ -276,12 +262,10 @@ jobs:
           test -f monitoring/k6/load-test.js
           echo "k6 scripts verified."
 
-
       - name: Verify Postman Collection
         run: |
           test -f "monitoring/postman/NetSentinel API Tests.postman_collection.json"
           echo "Postman collection verified."
-
 
       # ==========================================================
       # Week 6 Validation
@@ -291,78 +275,50 @@ jobs:
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         run: |
-          echo "Starting FastAPI server..."
-
           nohup uvicorn src.api.main:app \
             --host 0.0.0.0 \
             --port 8000 \
             > uvicorn.log 2>&1 &
 
-          SERVER_PID=$!
+          echo $! > uvicorn.pid
 
-          echo "FastAPI PID: $SERVER_PID"
-          echo "Waiting for FastAPI server..."
-
-          SERVER_READY=false
+          echo "Waiting for FastAPI to start..."
 
           for i in {1..30}; do
-
-            if curl --silent --fail http://localhost:8000/health > /dev/null; then
-              echo "FastAPI server is running successfully."
-              SERVER_READY=true
+            if curl -sf http://localhost:8000/health > /dev/null; then
+              echo "FastAPI started successfully."
               break
             fi
 
-            if ! kill -0 $SERVER_PID 2>/dev/null; then
-              echo "FastAPI server stopped unexpectedly."
-              echo "========== Uvicorn Log =========="
-              cat uvicorn.log
-              echo "================================="
-              exit 1
-            fi
-
-            echo "Waiting for FastAPI server... ($i/30)"
             sleep 2
-
           done
 
-          if [ "$SERVER_READY" != "true" ]; then
-            echo "FastAPI server failed to become ready."
-            echo "========== Uvicorn Log =========="
-            cat uvicorn.log
-            echo "================================="
-            exit 1
-          fi
-
-          echo "========== Uvicorn Log =========="
+          echo "FastAPI logs:"
           cat uvicorn.log
-          echo "================================="
-
 
       - name: Verify Health Endpoint
         run: |
           curl --fail http://localhost:8000/health
-
+          echo
+          echo "Health endpoint verified."
 
       - name: Verify Metrics Endpoint
         run: |
           curl --fail http://localhost:8000/metrics
-
+          echo
+          echo "Metrics endpoint verified."
 
       - name: Run Unit Tests
         run: |
           pytest tests/test_unit.py -v
 
-
       - name: Run Connectivity Tests
         run: |
           pytest tests/connectivity_test.py -v
 
-
       - name: Run Integration Tests
         run: |
           pytest tests/test_integration.py -v
-
 
       # ==========================================================
       # Week 7 Validation
@@ -372,11 +328,9 @@ jobs:
         run: |
           pytest tests/test_analysis.py -v
 
-
       - name: Generate Analytics Charts
         run: |
           python test_chart.py
-
 
       - name: Verify Generated Charts
         run: |
@@ -385,13 +339,22 @@ jobs:
           test -f monitoring/reports/charts/total_requests.png
           test -f monitoring/reports/charts/packet_loss.png
           test -f monitoring/reports/charts/error_rate.png
-
           echo "Analytics charts generated successfully."
 
+      # ==========================================================
+      # Week 8 Validation - AI / Groq
+      # ==========================================================
 
-      # ==========================================================
-      # Week 8 Validation - Groq AI
-      # ==========================================================
+      - name: Verify Groq API Secret
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: |
+          if [ -z "$GROQ_API_KEY" ]; then
+            echo "ERROR: GROQ_API_KEY GitHub Secret is not configured."
+            exit 1
+          fi
+
+          echo "GROQ_API_KEY is configured."
 
       - name: Run AI Tests
         env:
@@ -399,13 +362,11 @@ jobs:
         run: |
           pytest tests/test_ai.py -v
 
-
       - name: Run Scenario Validation
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         run: |
           pytest tests/test_scenario_runner.py -v
-
 
       - name: Generate AI Reports
         env:
@@ -413,39 +374,65 @@ jobs:
         run: |
           python test_report_generator.py
 
-
       - name: Verify AI Reports
         run: |
           test -f monitoring/reports/executive_summary.txt
           test -f monitoring/reports/detailed_technical_report.txt
-
           echo "AI reports generated successfully."
-
 
       - name: Verify Scenario Reports
         run: |
           test -f monitoring/reports/scenario_reports/healthy_network_report.txt
           test -f monitoring/reports/scenario_reports/high_latency_report.txt
           test -f monitoring/reports/scenario_reports/high_error_rate_report.txt
-
           echo "Scenario reports generated successfully."
 
-
       # ==========================================================
-      # Week 11 - Grafana & Prometheus Validation
+      # Week 11 Validation - Grafana & Prometheus
       # ==========================================================
 
-      - name: Verify Grafana Test File
+      - name: Start Prometheus and Grafana
         run: |
-          test -f tests/test_grafana.py
-          echo "Grafana test file verified."
+          docker compose up -d prometheus grafana
 
+          echo "Waiting for Prometheus and Grafana..."
 
-      - name: Verify Grafana Dashboard
+          for i in {1..30}; do
+            PROMETHEUS_OK=false
+            GRAFANA_OK=false
+
+            if curl -sf http://localhost:9090/-/ready > /dev/null; then
+              PROMETHEUS_OK=true
+            fi
+
+            if curl -sf http://localhost:3000/api/health > /dev/null; then
+              GRAFANA_OK=true
+            fi
+
+            if [ "$PROMETHEUS_OK" = true ] && [ "$GRAFANA_OK" = true ]; then
+              echo "Prometheus and Grafana are ready."
+              break
+            fi
+
+            sleep 2
+          done
+
+      - name: Verify Prometheus Health
+        run: |
+          curl --fail http://localhost:9090/-/ready
+          echo
+          echo "Prometheus is healthy."
+
+      - name: Verify Grafana Health
+        run: |
+          curl --fail http://localhost:3000/api/health
+          echo
+          echo "Grafana is healthy."
+
+      - name: Verify Grafana Dashboard File
         run: |
           test -f grafana/dashboards/netsentinel-dashboard.json
-          echo "Grafana dashboard file verified."
-
+          echo "Grafana dashboard file exists."
 
       - name: Validate Grafana Dashboard JSON
         run: |
@@ -460,116 +447,51 @@ jobs:
           assert isinstance(dashboard, dict)
 
           print("Grafana dashboard JSON is valid.")
-          print("Dashboard structure verified.")
           PY
-
-
-      # ==========================================================
-      # Start Prometheus and Grafana
-      # ==========================================================
-
-      - name: Start Monitoring Services
-        run: |
-          docker compose up -d prometheus grafana
-
-          echo "Monitoring services started."
-
-          docker compose ps
-
-
-      # ==========================================================
-      # Prometheus Health Check
-      # ==========================================================
-
-      - name: Wait for Prometheus
-        run: |
-          echo "Waiting for Prometheus..."
-
-          PROMETHEUS_READY=false
-
-          for i in {1..30}; do
-
-            if curl --silent --fail \
-              http://localhost:9090/-/healthy > /dev/null; then
-
-              echo "Prometheus is healthy."
-              PROMETHEUS_READY=true
-              break
-            fi
-
-            echo "Waiting for Prometheus... ($i/30)"
-            sleep 2
-
-          done
-
-          if [ "$PROMETHEUS_READY" != "true" ]; then
-
-            echo "Prometheus failed to become healthy."
-
-            echo "========== Prometheus Logs =========="
-            docker compose logs prometheus
-            echo "===================================="
-
-            exit 1
-          fi
-
-
-      # ==========================================================
-      # Grafana Health Check
-      # ==========================================================
-
-      - name: Wait for Grafana
-        run: |
-          echo "Waiting for Grafana..."
-
-          GRAFANA_READY=false
-
-          for i in {1..30}; do
-
-            if curl --silent --fail \
-              http://localhost:3000/api/health > /dev/null; then
-
-              echo "Grafana is healthy."
-              GRAFANA_READY=true
-              break
-            fi
-
-            echo "Waiting for Grafana... ($i/30)"
-            sleep 2
-
-          done
-
-          if [ "$GRAFANA_READY" != "true" ]; then
-
-            echo "Grafana failed to become healthy."
-
-            echo "========== Grafana Logs =========="
-            docker compose logs grafana
-            echo "================================="
-
-            exit 1
-          fi
-
-
-      # ==========================================================
-      # Week 11 - Grafana Tests
-      # ==========================================================
 
       - name: Run Grafana Tests
         run: |
           pytest tests/test_grafana.py -v
 
+      # ==========================================================
+      # Week 11 - Verify Monitoring Reports
+      # ==========================================================
+
+      - name: Verify Monitoring Reports
+        run: |
+          test -f monitoring/reports/latency-test-results.json
+          test -f monitoring/reports/load-test-results.json
+          test -f monitoring/reports/smoke-test-results.json
+          test -f monitoring/reports/networkwatcher/networkwatcher-report.json
+          test -f monitoring/reports/postman/postman-report.json
+          echo "Monitoring reports verified."
+
+      - name: Verify Monitoring Charts
+        run: |
+          test -f monitoring/reports/charts/average_latency.png
+          test -f monitoring/reports/charts/p95_latency.png
+          test -f monitoring/reports/charts/total_requests.png
+          test -f monitoring/reports/charts/packet_loss.png
+          test -f monitoring/reports/charts/error_rate.png
+          echo "Monitoring charts verified."
+
+      - name: Verify Week 11 Evidence
+        run: |
+          test -f evidence/week11/grafana-dashboard.png
+          test -f evidence/week11/network-health.png
+          test -f evidence/week11/network-quality.png
+          test -f evidence/week11/traffic-errors.png
+          echo "Week 11 evidence verified."
 
       # ==========================================================
-      # Week 11 - Complete Test Suite
+      # Full Test Suite
       # ==========================================================
 
-      - name: Run Complete Test Suite
+      - name: Run Full Test Suite
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         run: |
-          pytest tests/ -v
-
+          pytest -v
 
       # ==========================================================
       # Coverage Report
@@ -585,7 +507,6 @@ jobs:
             --cov-report=xml \
             --cov-report=html
 
-
       - name: Upload Coverage Report
         uses: actions/upload-artifact@v4
         with:
@@ -594,54 +515,75 @@ jobs:
             coverage.xml
             htmlcov/
 
-
       # ==========================================================
       # Upload Week 11 Evidence
       # ==========================================================
 
-      - name: Upload Week 11 Monitoring Evidence
+      - name: Upload Week 11 Evidence
         uses: actions/upload-artifact@v4
-        if: always()
         with:
-          name: week11-monitoring-evidence
+          name: netsentinel-week11-evidence
           path: |
+            evidence/week11/
             grafana/dashboards/netsentinel-dashboard.json
             monitoring/reports/charts/
-
+            monitoring/reports/*.txt
+            monitoring/reports/scenario_reports/
 
       # ==========================================================
-      # Stop Monitoring Services
+      # Cleanup
       # ==========================================================
 
-      - name: Stop Monitoring Services
+      - name: Stop Monitoring Containers
         if: always()
         run: |
           docker compose down
 
+      - name: Show FastAPI Logs on Failure
+        if: failure()
+        run: |
+          echo "=============================="
+          echo "FastAPI Logs"
+          echo "=============================="
+
+          if [ -f uvicorn.log ]; then
+            cat uvicorn.log
+          else
+            echo "No uvicorn.log found."
+          fi
+
+          echo "=============================="
+          echo "Docker Containers"
+          echo "=============================="
+
+          docker ps -a
+
+          echo "=============================="
+          echo "Docker Compose Logs"
+          echo "=============================="
+
+          docker compose logs --no-color || true
 
       # ==========================================================
-      # Final Validation
+      # Validation Complete
       # ==========================================================
 
       - name: NetSentinel Validation Complete
-        if: success()
         run: |
-          echo "=========================================="
-          echo " NetSentinel CI Pipeline Completed"
-          echo "=========================================="
-          echo ""
+          echo "=============================================="
+          echo "      NetSentinel CI Pipeline Completed"
+          echo "=============================================="
           echo "Week 5 Validation  : PASSED"
           echo "Week 6 Validation  : PASSED"
           echo "Week 7 Validation  : PASSED"
           echo "Week 8 Validation  : PASSED"
           echo "Week 11 Validation : PASSED"
-          echo ""
-          echo "Groq AI Tests      : PASSED"
-          echo "Grafana Tests      : PASSED"
-          echo "Prometheus Tests   : PASSED"
-          echo "Complete Tests     : PASSED"
+          echo "Grafana            : VERIFIED"
+          echo "Prometheus         : VERIFIED"
+          echo "AI / Groq          : VERIFIED"
+          echo "Full Test Suite    : PASSED"
           echo "Coverage Report    : GENERATED"
-          echo "AI Reports         : GENERATED"
-          echo "=========================================="
+          echo "Week 11 Evidence   : UPLOADED"
+          echo "=============================================="
           echo "All validations completed successfully!"
-          echo "=========================================="
+          echo "=============================================="
