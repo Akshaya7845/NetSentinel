@@ -7,7 +7,7 @@ class ReportGenerator:
     """
     Generates and saves AI reports.
 
-    If Gemini is unavailable (quota exceeded, network issue, etc.),
+    If Gemini/Groq is unavailable (quota exceeded, network issue, etc.),
     existing reports will be used instead of failing.
     """
 
@@ -36,7 +36,7 @@ class ReportGenerator:
 
         try:
 
-            print("Generating AI reports using Gemini...")
+            print("Generating AI reports using Groq...")
 
             executive = self.llm.generate_executive_report()
 

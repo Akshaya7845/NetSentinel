@@ -1,12 +1,8 @@
-**Executive Performance Summary**
-
-*   **Overall Health:** The network demonstrates excellent reliability and generally good performance.
-*   **Reliability:** Achieved near-perfect reliability with 0% failed requests, packet loss, and errors across 3783 requests.
-*   **Network Latency:** Average network latency is a healthy 32.04 ms, with tight minimum and maximum values indicating consistency.
-*   **Latency Outliers:** The P95 latency of 45.48 ms is notably higher than the average, suggesting a small percentage of requests experience elevated network delays.
-*   **Application Performance Discrepancy:** Postman's average response time of 68.33 ms is significantly higher than network latency, pointing to application-level processing overhead.
-*   **Recommendation 1:** Investigate the root cause of the elevated P95 latency to address intermittent network path issues or server load spikes.
-*   **Recommendation 2:** Conduct a detailed analysis of application performance to identify and optimize bottlenecks contributing to the higher Postman response times.
-*   **Recommendation 3:** Deploy Application Performance Monitoring (APM) tools for deeper visibility into server-side processing and component-level performance.
-
-The network infrastructure demonstrates strong reliability and generally good performance, though application-level optimization is crucial for overall user experience.
+- Overall network health remains excellent: zero failures, 0 % packet loss, 0 % error rate, and all requests succeeded.  
+- Average latency 32.04 ms is well below typical thresholds, with min 29.84 ms and max 35.29 ms indicating a tight distribution.  
+- The 95th‑percentile latency of 45.48 ms is still within acceptable limits but is the highest metric in the report.  
+- Postman average response time (68.33 ms) exceeds network latency, pointing to application‑level processing overhead.  
+- **Recommendation 1:** Continue to track P95 latency to pre‑empt any future drift.  
+- **Recommendation 2:** Profile and refactor the API endpoints that contribute to the Postman response time.  
+- **Recommendation 3:** Schedule quarterly health reviews to maintain zero‑failure status.  
+- **Conclusion:** The network is performing optimally, with only minor areas for improvement.

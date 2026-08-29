@@ -1,28 +1,31 @@
 import os
 
 from dotenv import load_dotenv
-from langchain_google_genai import ChatGoogleGenerativeAI
+from groq import Groq
 
 from src.ai.prompt_builder import PromptBuilder
 
 
 class LLMService:
     """
-    Connects NetSentinel with Gemini AI
-    using LangChain.
+    Connects NetSentinel with Groq AI.
     """
 
     def __init__(self):
 
         load_dotenv()
 
-        api_key = os.getenv("GEMINI_API_KEY")
+        api_key = os.getenv("GROQ_API_KEY")
 
-        self.llm = ChatGoogleGenerativeAI(
-            model="gemini-2.5-flash",
-            google_api_key=api_key,
-            temperature=0.3,
-        )
+        if not api_key:
+            raise ValueError(
+                "GROQ_API_KEY is not set. Please check your .env file."
+            )
+
+        self.client = Groq(api_key=api_key)
+
+        # Groq model that you successfully tested
+        self.model = "openai/gpt-oss-20b"
 
         self.prompt_builder = PromptBuilder()
 
@@ -31,9 +34,18 @@ class LLMService:
         Generates AI output for any custom prompt.
         """
 
-        response = self.llm.invoke(prompt)
+        response = self.client.chat.completions.create(
+            model=self.model,
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt,
+                }
+            ],
+            temperature=0.3,
+        )
 
-        return response.content
+        return response.choices[0].message.content
 
     def generate_executive_report(self):
         """

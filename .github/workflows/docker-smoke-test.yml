@@ -1,3 +1,204 @@
+# name: NetSentinel CI
+
+# on:
+#   push:
+#     branches:
+#       - main
+#   workflow_dispatch:
+
+# jobs:
+#   netsentinel-validation:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       # ----------------------------
+#       # Checkout Repository
+#       # ----------------------------
+#       - name: Checkout Repository
+#         uses: actions/checkout@v4
+
+#       # ----------------------------
+#       # Python Setup
+#       # ----------------------------
+#       - name: Set up Python
+#         uses: actions/setup-python@v5
+#         with:
+#           python-version: "3.12"
+
+#       # ----------------------------
+#       # Install Dependencies
+#       # ----------------------------
+#       - name: Install Dependencies
+#         run: |
+#           python -m pip install --upgrade pip
+#           pip install -r requirements.txt
+#           pip install pytest pytest-cov uvicorn requests
+
+#       # ==========================================================
+#       # Week 5 Validation
+#       # ==========================================================
+
+#       - name: Verify Project Structure
+#         run: |
+#           test -f docker-compose.yml
+#           test -d monitoring
+#           test -d tests
+#           test -d src/analytics
+#           test -d src/ai
+#           echo "Project structure verified."
+
+#       - name: Verify Test Files
+#         run: |
+#           test -f tests/connectivity_test.py
+#           test -f tests/test_unit.py
+#           test -f tests/test_integration.py
+#           test -f tests/test_analysis.py
+#           test -f tests/test_ai.py
+#           test -f tests/test_scenario_runner.py
+#           echo "All test files verified."
+
+#       - name: Verify k6 Scripts
+#         run: |
+#           test -f monitoring/k6/smoke-test.js
+#           test -f monitoring/k6/latency-test.js
+#           test -f monitoring/k6/load-test.js
+#           echo "k6 scripts verified."
+
+#       - name: Verify Postman Collection
+#         run: |
+#           test -f "monitoring/postman/NetSentinel API Tests.postman_collection.json"
+#           echo "Postman collection verified."
+
+#       # ==========================================================
+#       # Week 6 Validation
+#       # ==========================================================
+
+#       - name: Start FastAPI Server
+#         env:
+#           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+#         run: |
+#           nohup uvicorn src.api.main:app --host 0.0.0.0 --port 8000 > uvicorn.log 2>&1 &
+#           sleep 15
+#           cat uvicorn.log
+
+#       - name: Verify Health Endpoint
+#         run: |
+#           curl --fail http://localhost:8000/health
+
+#       - name: Verify Metrics Endpoint
+#         run: |
+#           curl --fail http://localhost:8000/metrics
+
+#       - name: Run Unit Tests
+#         run: |
+#           pytest tests/test_unit.py -v
+
+#       - name: Run Connectivity Tests
+#         run: |
+#           pytest tests/connectivity_test.py -v
+
+#       - name: Run Integration Tests
+#         run: |
+#           pytest tests/test_integration.py -v
+
+#       # ==========================================================
+#       # Week 7 Validation
+#       # ==========================================================
+
+#       - name: Run Analytics Tests
+#         run: |
+#           pytest tests/test_analysis.py -v
+
+#       - name: Generate Analytics Charts
+#         run: |
+#           python test_chart.py
+
+#       - name: Verify Generated Charts
+#         run: |
+#           test -f monitoring/reports/charts/average_latency.png
+#           test -f monitoring/reports/charts/p95_latency.png
+#           test -f monitoring/reports/charts/total_requests.png
+#           test -f monitoring/reports/charts/packet_loss.png
+#           test -f monitoring/reports/charts/error_rate.png
+#           echo "Analytics charts generated successfully."
+
+#       # ==========================================================
+#       # Week 8 Validation
+#       # ==========================================================
+
+#       - name: Run AI Tests
+#         env:
+#           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+#         run: |
+#           pytest tests/test_ai.py -v
+
+#       - name: Run Scenario Validation
+#         env:
+#           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+#         run: |
+#           pytest tests/test_scenario_runner.py -v
+
+#       - name: Generate AI Reports
+#         env:
+#           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+#         run: |
+#           python test_report_generator.py
+
+#       - name: Verify AI Reports
+#         run: |
+#           test -f monitoring/reports/executive_summary.txt
+#           test -f monitoring/reports/detailed_technical_report.txt
+#           echo "AI reports generated successfully."
+
+#       - name: Verify Scenario Reports
+#         run: |
+#           test -f monitoring/reports/scenario_reports/healthy_network_report.txt
+#           test -f monitoring/reports/scenario_reports/high_latency_report.txt
+#           test -f monitoring/reports/scenario_reports/high_error_rate_report.txt
+#           echo "Scenario reports generated successfully."
+
+
+#       # ==========================================================
+#       # Coverage Report
+#       # ==========================================================
+
+#       - name: Generate Coverage Report
+#         env:
+#           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+#         run: |
+#           pytest tests/ \
+#             --cov=src \
+#             --cov-report=term-missing \
+#             --cov-report=xml \
+#             --cov-report=html
+
+#       - name: Upload Coverage Report
+#         uses: actions/upload-artifact@v4
+#         with:
+#           name: coverage-report
+#           path: |
+#             coverage.xml
+#             htmlcov/
+
+#       # ==========================================================
+#       # Validation Complete
+#       # ==========================================================
+
+#       - name: NetSentinel Validation Complete
+#         run: |
+#           echo "======================================"
+#           echo " NetSentinel CI Pipeline Completed"
+#           echo "======================================"
+#           echo "Week 5 Validation : PASSED"
+#           echo "Week 6 Validation : PASSED"
+#           echo "Week 7 Validation : PASSED"
+#           echo "Week 8 Validation : PASSED"
+#           echo "Coverage Report   : GENERATED"
+#           echo "AI Reports        : GENERATED"
+#           echo "======================================"
+#           echo "All validations completed successfully!"
+
+
 name: NetSentinel CI
 
 on:
@@ -11,28 +212,35 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # ----------------------------
+
+      # ==========================================================
       # Checkout Repository
-      # ----------------------------
+      # ==========================================================
+
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # ----------------------------
+
+      # ==========================================================
       # Python Setup
-      # ----------------------------
+      # ==========================================================
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
-      # ----------------------------
+
+      # ==========================================================
       # Install Dependencies
-      # ----------------------------
+      # ==========================================================
+
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pytest pytest-cov uvicorn requests
+
 
       # ==========================================================
       # Week 5 Validation
@@ -47,6 +255,7 @@ jobs:
           test -d src/ai
           echo "Project structure verified."
 
+
       - name: Verify Test Files
         run: |
           test -f tests/connectivity_test.py
@@ -55,7 +264,8 @@ jobs:
           test -f tests/test_analysis.py
           test -f tests/test_ai.py
           test -f tests/test_scenario_runner.py
-          echo "All test files verified."
+          echo "All existing test files verified."
+
 
       - name: Verify k6 Scripts
         run: |
@@ -64,10 +274,12 @@ jobs:
           test -f monitoring/k6/load-test.js
           echo "k6 scripts verified."
 
+
       - name: Verify Postman Collection
         run: |
           test -f "monitoring/postman/NetSentinel API Tests.postman_collection.json"
           echo "Postman collection verified."
+
 
       # ==========================================================
       # Week 6 Validation
@@ -77,29 +289,38 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
-          nohup uvicorn src.api.main:app --host 0.0.0.0 --port 8000 > uvicorn.log 2>&1 &
+          nohup uvicorn src.api.main:app \
+            --host 0.0.0.0 \
+            --port 8000 > uvicorn.log 2>&1 &
+
           sleep 15
           cat uvicorn.log
+
 
       - name: Verify Health Endpoint
         run: |
           curl --fail http://localhost:8000/health
 
+
       - name: Verify Metrics Endpoint
         run: |
           curl --fail http://localhost:8000/metrics
+
 
       - name: Run Unit Tests
         run: |
           pytest tests/test_unit.py -v
 
+
       - name: Run Connectivity Tests
         run: |
           pytest tests/connectivity_test.py -v
 
+
       - name: Run Integration Tests
         run: |
           pytest tests/test_integration.py -v
+
 
       # ==========================================================
       # Week 7 Validation
@@ -109,9 +330,11 @@ jobs:
         run: |
           pytest tests/test_analysis.py -v
 
+
       - name: Generate Analytics Charts
         run: |
           python test_chart.py
+
 
       - name: Verify Generated Charts
         run: |
@@ -121,6 +344,7 @@ jobs:
           test -f monitoring/reports/charts/packet_loss.png
           test -f monitoring/reports/charts/error_rate.png
           echo "Analytics charts generated successfully."
+
 
       # ==========================================================
       # Week 8 Validation
@@ -132,11 +356,13 @@ jobs:
         run: |
           pytest tests/test_ai.py -v
 
+
       - name: Run Scenario Validation
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           pytest tests/test_scenario_runner.py -v
+
 
       - name: Generate AI Reports
         env:
@@ -144,11 +370,13 @@ jobs:
         run: |
           python test_report_generator.py
 
+
       - name: Verify AI Reports
         run: |
           test -f monitoring/reports/executive_summary.txt
           test -f monitoring/reports/detailed_technical_report.txt
           echo "AI reports generated successfully."
+
 
       - name: Verify Scenario Reports
         run: |
@@ -156,6 +384,107 @@ jobs:
           test -f monitoring/reports/scenario_reports/high_latency_report.txt
           test -f monitoring/reports/scenario_reports/high_error_rate_report.txt
           echo "Scenario reports generated successfully."
+
+
+      # ==========================================================
+      # Week 11 - Grafana & Prometheus Validation
+      # ==========================================================
+
+      - name: Verify Grafana Test File
+        run: |
+          test -f tests/test_grafana.py
+          echo "Grafana test file verified."
+
+
+      - name: Verify Grafana Dashboard
+        run: |
+          test -f grafana/dashboards/netsentinel-dashboard.json
+          echo "Grafana dashboard file verified."
+
+
+      - name: Validate Grafana Dashboard JSON
+        run: |
+          python - <<'PY'
+          import json
+
+          dashboard_file = "grafana/dashboards/netsentinel-dashboard.json"
+
+          with open(dashboard_file, "r", encoding="utf-8") as file:
+              dashboard = json.load(file)
+
+          assert isinstance(dashboard, dict)
+
+          print("Grafana dashboard JSON is valid.")
+          print("Dashboard structure verified.")
+          PY
+
+
+      # ==========================================================
+      # Start Monitoring Services
+      # ==========================================================
+
+      - name: Start Prometheus and Grafana
+        run: |
+          docker compose up -d prometheus grafana
+          docker compose ps
+
+
+      - name: Wait for Prometheus
+        run: |
+          echo "Waiting for Prometheus..."
+
+          for i in {1..30}; do
+            if curl --silent --fail http://localhost:9090/-/healthy; then
+              echo
+              echo "Prometheus is healthy."
+              exit 0
+            fi
+
+            sleep 2
+          done
+
+          echo "Prometheus failed to become healthy."
+          docker compose logs prometheus
+          exit 1
+
+
+      - name: Wait for Grafana
+        run: |
+          echo "Waiting for Grafana..."
+
+          for i in {1..30}; do
+            if curl --silent --fail http://localhost:3000/api/health; then
+              echo
+              echo "Grafana is healthy."
+              exit 0
+            fi
+
+            sleep 2
+          done
+
+          echo "Grafana failed to become healthy."
+          docker compose logs grafana
+          exit 1
+
+
+      # ==========================================================
+      # Week 11 Grafana Tests
+      # ==========================================================
+
+      - name: Run Grafana Tests
+        run: |
+          pytest tests/test_grafana.py -v
+
+
+      # ==========================================================
+      # Week 11 - Full Test Suite
+      # ==========================================================
+
+      - name: Run Complete Test Suite
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          pytest tests/ -v
 
 
       # ==========================================================
@@ -172,6 +501,7 @@ jobs:
             --cov-report=xml \
             --cov-report=html
 
+
       - name: Upload Coverage Report
         uses: actions/upload-artifact@v4
         with:
@@ -179,6 +509,31 @@ jobs:
           path: |
             coverage.xml
             htmlcov/
+
+
+      # ==========================================================
+      # Upload Week 11 Evidence
+      # ==========================================================
+
+      - name: Upload Week 11 Monitoring Evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: week11-monitoring-evidence
+          path: |
+            grafana/dashboards/netsentinel-dashboard.json
+            evidence/week11/
+            monitoring/reports/charts/
+
+
+      # ==========================================================
+      # Stop Monitoring Services
+      # ==========================================================
+
+      - name: Stop Monitoring Services
+        if: always()
+        run: |
+          docker compose down
+
 
       # ==========================================================
       # Validation Complete
@@ -193,6 +548,9 @@ jobs:
           echo "Week 6 Validation : PASSED"
           echo "Week 7 Validation : PASSED"
           echo "Week 8 Validation : PASSED"
+          echo "Week 11 Validation: PASSED"
+          echo "Grafana Tests     : PASSED"
+          echo "Prometheus Tests  : PASSED"
           echo "Coverage Report   : GENERATED"
           echo "AI Reports        : GENERATED"
           echo "======================================"
