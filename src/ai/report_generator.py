@@ -1,128 +1,74 @@
-# from pathlib import Path
-
-# from src.ai.llm_service import LLMService
-
-
-# class ReportGenerator:
-#     """
-#     Generates and saves AI reports.
-
-#     If Gemini/Groq is unavailable (quota exceeded, network issue, etc.),
-#     existing reports will be used instead of failing.
-#     """
-
-#     def __init__(self):
-
-#         self.llm = LLMService()
-
-#         self.output_folder = Path("monitoring/reports")
-#         self.output_folder.mkdir(parents=True, exist_ok=True)
-
-#     def generate_reports(self):
-#         """
-#         Generates Executive Summary and Detailed Technical Report.
-
-#         If Gemini fails, existing reports are returned.
-#         """
-
-#         executive_file = (
-#             self.output_folder / "executive_summary.txt"
-#         )
-
-#         detailed_file = (
-#             self.output_folder /
-#             "detailed_technical_report.txt"
-#         )
-
-#         try:
-
-#             print("Generating AI reports using Groq...")
-
-#             executive = self.llm.generate_executive_report()
-
-#             detailed = self.llm.generate_detailed_report()
-
-#             executive_file.write_text(
-#                 executive,
-#                 encoding="utf-8"
-#             )
-
-#             detailed_file.write_text(
-#                 detailed,
-#                 encoding="utf-8"
-#             )
-
-#             print("AI reports generated successfully.")
-
-#         except Exception as error:
-
-#             print("\nWARNING: Gemini report generation failed.")
-#             print(error)
-
-#             if executive_file.exists() and detailed_file.exists():
-
-#                 print(
-#                     "Using previously generated AI reports."
-#                 )
-
-#             else:
-
-#                 raise RuntimeError(
-#                     "No existing AI reports found and "
-#                     "Gemini generation failed."
-#                 ) from error
-
-#         return {
-#             "executive_summary": executive_file,
-#             "detailed_report": detailed_file,
-#         }
-
 from pathlib import Path
 
 from src.ai.llm_service import LLMService
+from src.services.database_service import DatabaseService
 
 
 class ReportGenerator:
     """
-    Generates and saves AI reports using Groq.
+    Generates AI reports using Groq.
 
-    If Groq is unavailable or returns invalid/empty content,
-    existing non-empty reports will be reused.
+    Reports are:
+    1. Generated using LLMService.
+    2. Validated.
+    3. Saved as text files.
+    4. Stored in PostgreSQL.
+
+    If Groq generation fails and valid existing reports
+    are available, the existing reports are reused.
     """
 
     def __init__(self):
 
         self.llm = LLMService()
 
-        self.output_folder = Path("monitoring/reports")
-        self.output_folder.mkdir(parents=True, exist_ok=True)
+        self.db = DatabaseService()
+
+        self.output_folder = Path(
+            "monitoring/reports"
+        )
+
+        self.output_folder.mkdir(
+            parents=True,
+            exist_ok=True
+        )
 
     def generate_reports(self):
         """
-        Generates Executive Summary and Detailed Technical Report.
-
-        If Groq generation fails, existing non-empty reports
-        are reused instead of failing.
+        Generate Executive Summary and Detailed Technical Report.
         """
 
         executive_file = (
-            self.output_folder / "executive_summary.txt"
+            self.output_folder
+            / "executive_summary.txt"
         )
 
         detailed_file = (
-            self.output_folder / "detailed_technical_report.txt"
+            self.output_folder
+            / "detailed_technical_report.txt"
         )
 
         try:
 
-            print("Generating AI reports using Groq...")
+            print(
+                "Generating AI reports using Groq..."
+            )
 
-            executive = self.llm.generate_executive_report()
-            detailed = self.llm.generate_detailed_report()
+            # ------------------------------------------------
+            # Generate reports
+            # ------------------------------------------------
 
-            # ------------------------------------------
-            # Validate Groq responses
-            # ------------------------------------------
+            executive = (
+                self.llm.generate_executive_report()
+            )
+
+            detailed = (
+                self.llm.generate_detailed_report()
+            )
+
+            # ------------------------------------------------
+            # Validate responses
+            # ------------------------------------------------
 
             if not executive or not executive.strip():
                 raise RuntimeError(
@@ -134,44 +80,78 @@ class ReportGenerator:
                     "Groq returned an empty Detailed Technical Report."
                 )
 
-            # ------------------------------------------
-            # Save reports
-            # ------------------------------------------
+            executive = executive.strip()
+            detailed = detailed.strip()
+
+            # ------------------------------------------------
+            # Save reports to files
+            # ------------------------------------------------
 
             executive_file.write_text(
-                executive.strip(),
+                executive,
                 encoding="utf-8"
             )
 
             detailed_file.write_text(
-                detailed.strip(),
+                detailed,
                 encoding="utf-8"
             )
 
-            # ------------------------------------------
-            # Verify files were actually written
-            # ------------------------------------------
+            # ------------------------------------------------
+            # Verify files
+            # ------------------------------------------------
 
             if executive_file.stat().st_size == 0:
                 raise RuntimeError(
-                    "Executive Summary file was created but is empty."
+                    "Executive Summary file is empty."
                 )
 
             if detailed_file.stat().st_size == 0:
                 raise RuntimeError(
-                    "Detailed Technical Report file was created but is empty."
+                    "Detailed Technical Report file is empty."
                 )
 
-            print("AI reports generated successfully.")
+            # ------------------------------------------------
+            # Store reports in PostgreSQL
+            # ------------------------------------------------
+
+            executive_id = (
+                self.db.insert_ai_report(
+                    report_type="executive_summary",
+                    report_content=executive,
+                )
+            )
+
+            detailed_id = (
+                self.db.insert_ai_report(
+                    report_type="detailed_report",
+                    report_content=detailed,
+                )
+            )
+
+            print(
+                "AI reports generated successfully."
+            )
+
+            print(
+                f"Executive report database ID: {executive_id}"
+            )
+
+            print(
+                f"Detailed report database ID: {detailed_id}"
+            )
 
         except Exception as error:
 
-            print("\nWARNING: Groq report generation failed.")
+            print(
+                "\nWARNING: AI report generation failed."
+            )
+
             print(error)
 
-            # ------------------------------------------
-            # Reuse existing non-empty reports
-            # ------------------------------------------
+            # ------------------------------------------------
+            # Check existing reports
+            # ------------------------------------------------
 
             executive_exists = (
                 executive_file.exists()
@@ -183,18 +163,18 @@ class ReportGenerator:
                 and detailed_file.stat().st_size > 0
             )
 
-            if executive_exists and detailed_exists:
-
-                print(
-                    "Using previously generated non-empty AI reports."
-                )
-
-            else:
-
+            if not (
+                executive_exists
+                and detailed_exists
+            ):
                 raise RuntimeError(
-                    "Groq report generation failed and "
-                    "no valid existing AI reports are available."
+                    "AI report generation failed and "
+                    "no valid existing reports are available."
                 ) from error
+
+            print(
+                "Using previously generated non-empty reports."
+            )
 
         return {
             "executive_summary": executive_file,

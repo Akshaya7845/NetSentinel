@@ -1,11 +1,14 @@
 version: "3.9"
 
 services:
+
   web:
     image: nginx:latest
     container_name: netsentinel-web
     ports:
       - "8080:80"
+    networks:
+      - netsentinel-network
 
   db:
     image: postgres:15
@@ -14,6 +17,18 @@ services:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin123
       POSTGRES_DB: netsentinel
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - netsentinel-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d netsentinel"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   prometheus:
     image: prom/prometheus
@@ -22,12 +37,40 @@ services:
       - "9090:9090"
     volumes:
       - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.retention.time=30d"
+      - "--storage.tsdb.path=/prometheus"
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    networks:
+      - netsentinel-network
+
   grafana:
     image: grafana/grafana:latest
     container_name: netsentinel-grafana
     ports:
       - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboards:/etc/grafana/dashboards
     depends_on:
       - prometheus
+      - db
+    networks:
+      - netsentinel-network
+
+volumes:
+  postgres_data:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  netsentinel-network:
+    driver: bridge

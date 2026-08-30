@@ -4,18 +4,24 @@
   "metadata": {
     "name": "adqfzbh",
     "namespace": "default",
-    "uid": "7c658b7d-edab-4682-a8d2-0fbad859a46d",
-    "resourceVersion": "1787947022506991",
-    "generation": 19,
-    "creationTimestamp": "2026-08-25T08:42:22Z",
+    "uid": "55a2700c-57f3-44c3-84b6-22ac2f1dba31",
+    "resourceVersion": "1788120457803002",
+    "generation": 6,
+    "creationTimestamp": "2026-08-30T17:25:24Z",
     "labels": {
-      "grafana.app/deprecatedInternalID": "2499897278455808"
+      "grafana.app/deprecatedInternalID": "4444048623439872"
     },
     "annotations": {
-      "grafana.app/createdBy": "user:cfw8a4r812sxsb",
+      "grafana.app/createdBy": "access-policy:service",
+      "grafana.app/managedBy": "classic-file-provisioning",
+      "grafana.app/managerAllowsEdits": "true",
+      "grafana.app/managerId": "NetSentinel",
       "grafana.app/saved-from-ui": "Grafana v13.2.0 (f681b1359f)",
-      "grafana.app/updatedBy": "user:cfw8a4r812sxsb",
-      "grafana.app/updatedTimestamp": "2026-08-28T19:57:02Z"
+      "grafana.app/sourceChecksum": "e95ad4656fcf69befbe3b3445fff606f",
+      "grafana.app/sourcePath": "/etc/grafana/dashboards/netsentinel-dashboard.json",
+      "grafana.app/sourceTimestamp": "1788113278000",
+      "grafana.app/updatedBy": "user:bfwq7qhfuws1sf",
+      "grafana.app/updatedTimestamp": "2026-08-30T20:07:37Z"
     }
   },
   "spec": {
@@ -62,7 +68,7 @@
                       "group": "prometheus",
                       "version": "v0",
                       "datasource": {
-                        "name": "afw8anwipvif4a"
+                        "name": "P40E7D2C588675C29"
                       },
                       "spec": {
                         "editorMode": "builder",
@@ -176,7 +182,7 @@
                       "group": "prometheus",
                       "version": "v0",
                       "datasource": {
-                        "name": "afw8anwipvif4a"
+                        "name": "P40E7D2C588675C29"
                       },
                       "spec": {
                         "editorMode": "builder",
@@ -290,7 +296,7 @@
                       "group": "prometheus",
                       "version": "v0",
                       "datasource": {
-                        "name": "afw8anwipvif4a"
+                        "name": "P40E7D2C588675C29"
                       },
                       "spec": {
                         "editorMode": "builder",
@@ -377,7 +383,7 @@
                       "group": "prometheus",
                       "version": "v0",
                       "datasource": {
-                        "name": "afw8anwipvif4a"
+                        "name": "P40E7D2C588675C29"
                       },
                       "spec": {
                         "editorMode": "builder",
@@ -476,11 +482,11 @@
                       "group": "prometheus",
                       "version": "v0",
                       "datasource": {
-                        "name": "afw8anwipvif4a"
+                        "name": "P40E7D2C588675C29"
                       },
                       "spec": {
                         "editorMode": "builder",
-                        "expr": "netsentinel_k6_total_requests",
+                        "expr": "rate(netsentinel_k6_total_requests[1m])",
                         "legendFormat": "__auto",
                         "range": true
                       }
@@ -571,6 +577,117 @@
           }
         }
       },
+      "panel-14": {
+        "kind": "Panel",
+        "spec": {
+          "id": 14,
+          "title": "🤖 AI Optimisation Recommendations",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "afwrsc5nlu70gd"
+                      },
+                      "spec": {
+                        "columns": [],
+                        "filters": [],
+                        "format": "table",
+                        "global_query_id": "",
+                        "pagination_mode": "none",
+                        "parser": "backend",
+                        "root_selector": "",
+                        "source": "url",
+                        "type": "json",
+                        "url": "/ai/executive-summary",
+                        "url_options": {
+                          "data": "",
+                          "method": "GET"
+                        }
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "table",
+            "version": "13.2.0",
+            "spec": {
+              "options": {
+                "cellHeight": "sm",
+                "showHeader": true,
+                "sortBy": [
+                  {
+                    "desc": true,
+                    "displayName": "report"
+                  }
+                ]
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      },
+                      {
+                        "value": 80,
+                        "color": "red"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "thresholds"
+                  },
+                  "custom": {
+                    "align": "auto",
+                    "cellOptions": {
+                      "type": "auto"
+                    },
+                    "footer": {
+                      "reducers": []
+                    },
+                    "inspect": false
+                  }
+                },
+                "overrides": [
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "report"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.width",
+                        "value": 496
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
       "panel-2": {
         "kind": "Panel",
         "spec": {
@@ -590,7 +707,7 @@
                       "group": "prometheus",
                       "version": "v0",
                       "datasource": {
-                        "name": "afw8anwipvif4a"
+                        "name": "P40E7D2C588675C29"
                       },
                       "spec": {
                         "editorMode": "builder",
@@ -687,7 +804,7 @@
                       "group": "prometheus",
                       "version": "v0",
                       "datasource": {
-                        "name": "afw8anwipvif4a"
+                        "name": "P40E7D2C588675C29"
                       },
                       "spec": {
                         "editorMode": "builder",
@@ -788,7 +905,7 @@
                       "group": "prometheus",
                       "version": "v0",
                       "datasource": {
-                        "name": "afw8anwipvif4a"
+                        "name": "P40E7D2C588675C29"
                       },
                       "spec": {
                         "editorMode": "builder",
@@ -996,6 +1113,19 @@
                         "element": {
                           "kind": "ElementReference",
                           "name": "panel-13"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 5,
+                        "y": 8,
+                        "width": 12,
+                        "height": 8,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-14"
                         }
                       }
                     }

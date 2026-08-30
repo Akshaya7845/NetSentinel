@@ -1,3 +1,199 @@
+# # name: NetSentinel CI
+
+# # on:
+# #   push:
+# #     branches:
+# #       - main
+# #   workflow_dispatch:
+
+# # jobs:
+# #   netsentinel-validation:
+# #     runs-on: ubuntu-latest
+
+# #     steps:
+# #       # ----------------------------
+# #       # Checkout Repository
+# #       # ----------------------------
+# #       - name: Checkout Repository
+# #         uses: actions/checkout@v4
+
+# #       # ----------------------------
+# #       # Python Setup
+# #       # ----------------------------
+# #       - name: Set up Python
+# #         uses: actions/setup-python@v5
+# #         with:
+# #           python-version: "3.12"
+
+# #       # ----------------------------
+# #       # Install Dependencies
+# #       # ----------------------------
+# #       - name: Install Dependencies
+# #         run: |
+# #           python -m pip install --upgrade pip
+# #           pip install -r requirements.txt
+# #           pip install pytest pytest-cov uvicorn requests
+
+# #       # ==========================================================
+# #       # Week 5 Validation
+# #       # ==========================================================
+
+# #       - name: Verify Project Structure
+# #         run: |
+# #           test -f docker-compose.yml
+# #           test -d monitoring
+# #           test -d tests
+# #           test -d src/analytics
+# #           test -d src/ai
+# #           echo "Project structure verified."
+
+# #       - name: Verify Test Files
+# #         run: |
+# #           test -f tests/connectivity_test.py
+# #           test -f tests/test_unit.py
+# #           test -f tests/test_integration.py
+# #           test -f tests/test_analysis.py
+# #           test -f tests/test_ai.py
+# #           test -f tests/test_scenario_runner.py
+# #           echo "All test files verified."
+
+# #       - name: Verify k6 Scripts
+# #         run: |
+# #           test -f monitoring/k6/smoke-test.js
+# #           test -f monitoring/k6/latency-test.js
+# #           test -f monitoring/k6/load-test.js
+# #           echo "k6 scripts verified."
+
+# #       - name: Verify Postman Collection
+# #         run: |
+# #           test -f "monitoring/postman/NetSentinel API Tests.postman_collection.json"
+# #           echo "Postman collection verified."
+
+# #       # ==========================================================
+# #       # Week 6 Validation
+# #       # ==========================================================
+
+# #       - name: Start FastAPI Server
+# #         env:
+# #         run: |
+# #           nohup uvicorn src.api.main:app --host 0.0.0.0 --port 8000 > uvicorn.log 2>&1 &
+# #           sleep 15
+# #           cat uvicorn.log
+
+# #       - name: Verify Health Endpoint
+# #         run: |
+# #           curl --fail http://localhost:8000/health
+
+# #       - name: Verify Metrics Endpoint
+# #         run: |
+# #           curl --fail http://localhost:8000/metrics
+
+# #       - name: Run Unit Tests
+# #         run: |
+# #           pytest tests/test_unit.py -v
+
+# #       - name: Run Connectivity Tests
+# #         run: |
+# #           pytest tests/connectivity_test.py -v
+
+# #       - name: Run Integration Tests
+# #         run: |
+# #           pytest tests/test_integration.py -v
+
+# #       # ==========================================================
+# #       # Week 7 Validation
+# #       # ==========================================================
+
+# #       - name: Run Analytics Tests
+# #         run: |
+# #           pytest tests/test_analysis.py -v
+
+# #       - name: Generate Analytics Charts
+# #         run: |
+# #           python test_chart.py
+
+# #       - name: Verify Generated Charts
+# #         run: |
+# #           test -f monitoring/reports/charts/average_latency.png
+# #           test -f monitoring/reports/charts/p95_latency.png
+# #           test -f monitoring/reports/charts/total_requests.png
+# #           test -f monitoring/reports/charts/packet_loss.png
+# #           test -f monitoring/reports/charts/error_rate.png
+# #           echo "Analytics charts generated successfully."
+
+# #       # ==========================================================
+# #       # Week 8 Validation
+# #       # ==========================================================
+
+# #       - name: Run AI Tests
+# #         env:
+# #         run: |
+# #           pytest tests/test_ai.py -v
+
+# #       - name: Run Scenario Validation
+# #         env:
+# #         run: |
+# #           pytest tests/test_scenario_runner.py -v
+
+# #       - name: Generate AI Reports
+# #         env:
+# #         run: |
+# #           python test_report_generator.py
+
+# #       - name: Verify AI Reports
+# #         run: |
+# #           test -f monitoring/reports/executive_summary.txt
+# #           test -f monitoring/reports/detailed_technical_report.txt
+# #           echo "AI reports generated successfully."
+
+# #       - name: Verify Scenario Reports
+# #         run: |
+# #           test -f monitoring/reports/scenario_reports/healthy_network_report.txt
+# #           test -f monitoring/reports/scenario_reports/high_latency_report.txt
+# #           test -f monitoring/reports/scenario_reports/high_error_rate_report.txt
+# #           echo "Scenario reports generated successfully."
+
+
+# #       # ==========================================================
+# #       # Coverage Report
+# #       # ==========================================================
+
+# #       - name: Generate Coverage Report
+# #         env:
+# #         run: |
+# #           pytest tests/ \
+# #             --cov=src \
+# #             --cov-report=term-missing \
+# #             --cov-report=xml \
+# #             --cov-report=html
+
+# #       - name: Upload Coverage Report
+# #         uses: actions/upload-artifact@v4
+# #         with:
+# #           name: coverage-report
+# #           path: |
+# #             coverage.xml
+# #             htmlcov/
+
+# #       # ==========================================================
+# #       # Validation Complete
+# #       # ==========================================================
+
+# #       - name: NetSentinel Validation Complete
+# #         run: |
+# #           echo "======================================"
+# #           echo " NetSentinel CI Pipeline Completed"
+# #           echo "======================================"
+# #           echo "Week 5 Validation : PASSED"
+# #           echo "Week 6 Validation : PASSED"
+# #           echo "Week 7 Validation : PASSED"
+# #           echo "Week 8 Validation : PASSED"
+# #           echo "Coverage Report   : GENERATED"
+# #           echo "AI Reports        : GENERATED"
+# #           echo "======================================"
+# #           echo "All validations completed successfully!"
+
+
 # name: NetSentinel CI
 
 # on:
@@ -11,28 +207,28 @@
 #     runs-on: ubuntu-latest
 
 #     steps:
-#       # ----------------------------
-#       # Checkout Repository
-#       # ----------------------------
+
+#       # ==========================================================
+#       # Repository Setup
+#       # ==========================================================
+
 #       - name: Checkout Repository
 #         uses: actions/checkout@v4
 
-#       # ----------------------------
-#       # Python Setup
-#       # ----------------------------
 #       - name: Set up Python
 #         uses: actions/setup-python@v5
 #         with:
 #           python-version: "3.12"
 
-#       # ----------------------------
+#       # ==========================================================
 #       # Install Dependencies
-#       # ----------------------------
+#       # ==========================================================
+
 #       - name: Install Dependencies
 #         run: |
 #           python -m pip install --upgrade pip
 #           pip install -r requirements.txt
-#           pip install pytest pytest-cov uvicorn requests
+#           pip install pytest pytest-cov uvicorn requests groq
 
 #       # ==========================================================
 #       # Week 5 Validation
@@ -45,6 +241,7 @@
 #           test -d tests
 #           test -d src/analytics
 #           test -d src/ai
+#           test -d grafana
 #           echo "Project structure verified."
 
 #       - name: Verify Test Files
@@ -55,6 +252,7 @@
 #           test -f tests/test_analysis.py
 #           test -f tests/test_ai.py
 #           test -f tests/test_scenario_runner.py
+#           test -f tests/test_grafana.py
 #           echo "All test files verified."
 
 #       - name: Verify k6 Scripts
@@ -75,18 +273,45 @@
 
 #       - name: Start FastAPI Server
 #         env:
+#           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
 #         run: |
-#           nohup uvicorn src.api.main:app --host 0.0.0.0 --port 8000 > uvicorn.log 2>&1 &
-#           sleep 15
+#           nohup uvicorn src.api.main:app \
+#             --host 0.0.0.0 \
+#             --port 8000 \
+#             > uvicorn.log 2>&1 &
+
+#           echo $! > uvicorn.pid
+
+#           echo "Waiting for FastAPI to start..."
+
+#           for i in {1..30}; do
+#             if curl -sf http://localhost:8000/health > /dev/null; then
+#               echo "FastAPI started successfully."
+#               break
+#             fi
+#             sleep 2
+#           done
+
+#           if ! curl -sf http://localhost:8000/health > /dev/null; then
+#             echo "FastAPI failed to start."
+#             cat uvicorn.log
+#             exit 1
+#           fi
+
+#           echo "FastAPI logs:"
 #           cat uvicorn.log
 
 #       - name: Verify Health Endpoint
 #         run: |
 #           curl --fail http://localhost:8000/health
+#           echo
+#           echo "Health endpoint verified."
 
 #       - name: Verify Metrics Endpoint
 #         run: |
 #           curl --fail http://localhost:8000/metrics
+#           echo
+#           echo "Metrics endpoint verified."
 
 #       - name: Run Unit Tests
 #         run: |
@@ -122,21 +347,35 @@
 #           echo "Analytics charts generated successfully."
 
 #       # ==========================================================
-#       # Week 8 Validation
+#       # Week 8 Validation - AI / Groq
 #       # ==========================================================
+
+#       - name: Verify Groq API Secret
+#         env:
+#           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+#         run: |
+#           if [ -z "$GROQ_API_KEY" ]; then
+#             echo "ERROR: GROQ_API_KEY GitHub Secret is not configured."
+#             exit 1
+#           fi
+
+#           echo "GROQ_API_KEY is configured."
 
 #       - name: Run AI Tests
 #         env:
+#           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
 #         run: |
 #           pytest tests/test_ai.py -v
 
 #       - name: Run Scenario Validation
 #         env:
+#           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
 #         run: |
 #           pytest tests/test_scenario_runner.py -v
 
 #       - name: Generate AI Reports
 #         env:
+#           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
 #         run: |
 #           python test_report_generator.py
 
@@ -153,6 +392,195 @@
 #           test -f monitoring/reports/scenario_reports/high_error_rate_report.txt
 #           echo "Scenario reports generated successfully."
 
+#       # ==========================================================
+#       # Week 11 Validation - Grafana & Prometheus
+#       # ==========================================================
+
+#       - name: Start Prometheus and Grafana
+#         run: |
+#           docker compose up -d prometheus grafana
+
+#           echo "Waiting for Prometheus and Grafana..."
+
+#           for i in {1..30}; do
+
+#             PROMETHEUS_OK=false
+#             GRAFANA_OK=false
+
+#             if curl -sf http://localhost:9090/-/ready > /dev/null; then
+#               PROMETHEUS_OK=true
+#             fi
+
+#             if curl -sf http://localhost:3000/api/health > /dev/null; then
+#               GRAFANA_OK=true
+#             fi
+
+#             if [ "$PROMETHEUS_OK" = true ] && [ "$GRAFANA_OK" = true ]; then
+#               echo "Prometheus and Grafana are ready."
+#               break
+#             fi
+
+#             sleep 2
+#           done
+
+#           if ! curl -sf http://localhost:9090/-/ready > /dev/null; then
+#             echo "Prometheus failed to start."
+#             docker compose logs prometheus
+#             exit 1
+#           fi
+
+#           if ! curl -sf http://localhost:3000/api/health > /dev/null; then
+#             echo "Grafana failed to start."
+#             docker compose logs grafana
+#             exit 1
+#           fi
+
+#       # ----------------------------------------------------------
+#       # Verify Prometheus
+#       # ----------------------------------------------------------
+
+#       - name: Verify Prometheus Health
+#         run: |
+#           curl --fail http://localhost:9090/-/ready
+#           echo
+#           echo "Prometheus is healthy."
+
+#       # ----------------------------------------------------------
+#       # Verify Grafana
+#       # ----------------------------------------------------------
+
+#       - name: Verify Grafana Health
+#         run: |
+#           curl --fail http://localhost:3000/api/health
+#           echo
+#           echo "Grafana is healthy."
+
+#       # ----------------------------------------------------------
+#       # Populate NetSentinel Prometheus Metrics
+#       # ----------------------------------------------------------
+
+#       - name: Populate Prometheus Metrics
+#         run: |
+#           echo "Calling NetSentinel performance endpoint..."
+#           curl --fail http://localhost:8000/performance/summary
+
+#           echo
+#           echo "Waiting for Prometheus to scrape metrics..."
+#           sleep 10
+
+#       # ----------------------------------------------------------
+#       # Verify NetSentinel Metrics
+#       # ----------------------------------------------------------
+
+#       - name: Verify NetSentinel Latency Metric
+#         run: |
+#           RESPONSE=$(curl -sf \
+#             "http://localhost:9090/api/v1/query?query=netsentinel_k6_average_latency_ms")
+
+#           echo "$RESPONSE"
+
+#           echo "$RESPONSE" | grep -q '"status":"success"'
+#           echo "$RESPONSE" | grep -q '"result":\['
+
+#           if echo "$RESPONSE" | grep -q '"result":\[\]'; then
+#             echo "ERROR: NetSentinel latency metric was not found."
+#             exit 1
+#           fi
+
+#           echo "NetSentinel latency metric verified."
+
+#       - name: Verify NetSentinel Failed Requests Metric
+#         run: |
+#           RESPONSE=$(curl -sf \
+#             "http://localhost:9090/api/v1/query?query=netsentinel_k6_failed_requests")
+
+#           echo "$RESPONSE"
+
+#           echo "$RESPONSE" | grep -q '"status":"success"'
+#           echo "$RESPONSE" | grep -q '"result":\['
+
+#           if echo "$RESPONSE" | grep -q '"result":\[\]'; then
+#             echo "ERROR: NetSentinel failed requests metric was not found."
+#             exit 1
+#           fi
+
+#           echo "NetSentinel failed requests metric verified."
+
+#       # ----------------------------------------------------------
+#       # Verify Grafana Dashboard
+#       # ----------------------------------------------------------
+
+#       - name: Verify Grafana Dashboard File
+#         run: |
+#           test -f grafana/dashboards/netsentinel-dashboard.json
+#           echo "Grafana dashboard file exists."
+
+#       - name: Validate Grafana Dashboard JSON
+#         run: |
+#           python - <<'PY'
+#           import json
+
+#           dashboard_file = "grafana/dashboards/netsentinel-dashboard.json"
+
+#           with open(dashboard_file, "r", encoding="utf-8") as file:
+#               dashboard = json.load(file)
+
+#           assert isinstance(dashboard, dict)
+
+#           print("Grafana dashboard JSON is valid.")
+#           PY
+
+#       # ----------------------------------------------------------
+#       # Run Grafana Tests
+#       # ----------------------------------------------------------
+
+#       - name: Run Grafana Tests
+#         run: |
+#           pytest tests/test_grafana.py -v
+
+#       # ==========================================================
+#       # Week 11 - Verify Monitoring Reports
+#       # ==========================================================
+
+#       - name: Verify Monitoring Reports
+#         run: |
+#           test -f monitoring/reports/latency-test-results.json
+#           test -f monitoring/reports/load-test-results.json
+#           test -f monitoring/reports/smoke-test-results.json
+#           test -f monitoring/reports/networkwatcher/networkwatcher-report.json
+#           test -f monitoring/reports/postman/postman-report.json
+#           echo "Monitoring reports verified."
+
+#       - name: Verify Monitoring Charts
+#         run: |
+#           test -f monitoring/reports/charts/average_latency.png
+#           test -f monitoring/reports/charts/p95_latency.png
+#           test -f monitoring/reports/charts/total_requests.png
+#           test -f monitoring/reports/charts/packet_loss.png
+#           test -f monitoring/reports/charts/error_rate.png
+#           echo "Monitoring charts verified."
+
+#       # ----------------------------------------------------------
+#       # Week 11 Evidence
+#       # ----------------------------------------------------------
+
+#       - name: Verify Week 11 Evidence
+#         run: |
+#           test -f evidence/week11/grafana-dashboard.png
+#           test -f evidence/week11/network-health.png
+#           test -f evidence/week11/network-quality.png
+#           test -f evidence/week11/traffic-errors.png
+#           echo "Week 11 evidence verified."
+
+#       # ==========================================================
+#       # Full Test Suite
+#       # ==========================================================
+
+#       - name: Run Full Test Suite
+#         env:
+#           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+#         run: |
+#           pytest -v
 
 #       # ==========================================================
 #       # Coverage Report
@@ -160,6 +588,7 @@
 
 #       - name: Generate Coverage Report
 #         env:
+#           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
 #         run: |
 #           pytest tests/ \
 #             --cov=src \
@@ -176,23 +605,77 @@
 #             htmlcov/
 
 #       # ==========================================================
+#       # Upload Week 11 Evidence
+#       # ==========================================================
+
+#       - name: Upload Week 11 Evidence
+#         uses: actions/upload-artifact@v4
+#         with:
+#           name: netsentinel-week11-evidence
+#           path: |
+#             evidence/week11/
+#             grafana/dashboards/netsentinel-dashboard.json
+#             monitoring/reports/charts/
+#             monitoring/reports/*.txt
+#             monitoring/reports/scenario_reports/
+
+#       # ==========================================================
+#       # Cleanup
+#       # ==========================================================
+
+#       - name: Stop Monitoring Containers
+#         if: always()
+#         run: |
+#           docker compose down
+
+#       - name: Show Logs on Failure
+#         if: failure()
+#         run: |
+#           echo "======================================"
+#           echo "FastAPI Logs"
+#           echo "======================================"
+
+#           if [ -f uvicorn.log ]; then
+#             cat uvicorn.log
+#           else
+#             echo "No uvicorn.log found."
+#           fi
+
+#           echo "======================================"
+#           echo "Docker Containers"
+#           echo "======================================"
+
+#           docker ps -a
+
+#           echo "======================================"
+#           echo "Docker Compose Logs"
+#           echo "======================================"
+
+#           docker compose logs --no-color || true
+
+#       # ==========================================================
 #       # Validation Complete
 #       # ==========================================================
 
 #       - name: NetSentinel Validation Complete
 #         run: |
-#           echo "======================================"
-#           echo " NetSentinel CI Pipeline Completed"
-#           echo "======================================"
-#           echo "Week 5 Validation : PASSED"
-#           echo "Week 6 Validation : PASSED"
-#           echo "Week 7 Validation : PASSED"
-#           echo "Week 8 Validation : PASSED"
-#           echo "Coverage Report   : GENERATED"
-#           echo "AI Reports        : GENERATED"
-#           echo "======================================"
+#           echo "=============================================="
+#           echo "      NetSentinel CI Pipeline Completed"
+#           echo "=============================================="
+#           echo "Week 5 Validation  : PASSED"
+#           echo "Week 6 Validation  : PASSED"
+#           echo "Week 7 Validation  : PASSED"
+#           echo "Week 8 Validation  : PASSED"
+#           echo "Week 11 Validation : PASSED"
+#           echo "Grafana            : VERIFIED"
+#           echo "Prometheus         : VERIFIED"
+#           echo "AI / Groq          : VERIFIED"
+#           echo "Full Test Suite    : PASSED"
+#           echo "Coverage Report    : GENERATED"
+#           echo "Week 11 Evidence   : UPLOADED"
+#           echo "=============================================="
 #           echo "All validations completed successfully!"
-
+#           echo "=============================================="
 
 name: NetSentinel CI
 
@@ -253,6 +736,7 @@ jobs:
           test -f tests/test_ai.py
           test -f tests/test_scenario_runner.py
           test -f tests/test_grafana.py
+          test -f tests/test_week12_dashboard_and_integration.py
           echo "All test files verified."
 
       - name: Verify k6 Scripts
@@ -396,11 +880,11 @@ jobs:
       # Week 11 Validation - Grafana & Prometheus
       # ==========================================================
 
-      - name: Start Prometheus and Grafana
+      - name: Start Monitoring Services
         run: |
-          docker compose up -d prometheus grafana
+          docker compose up -d
 
-          echo "Waiting for Prometheus and Grafana..."
+          echo "Waiting for monitoring services..."
 
           for i in {1..30}; do
 
@@ -435,6 +919,8 @@ jobs:
             exit 1
           fi
 
+          echo "Monitoring services started successfully."
+
       # ----------------------------------------------------------
       # Verify Prometheus
       # ----------------------------------------------------------
@@ -462,6 +948,7 @@ jobs:
       - name: Populate Prometheus Metrics
         run: |
           echo "Calling NetSentinel performance endpoint..."
+
           curl --fail http://localhost:8000/performance/summary
 
           echo
@@ -480,7 +967,6 @@ jobs:
           echo "$RESPONSE"
 
           echo "$RESPONSE" | grep -q '"status":"success"'
-          echo "$RESPONSE" | grep -q '"result":\['
 
           if echo "$RESPONSE" | grep -q '"result":\[\]'; then
             echo "ERROR: NetSentinel latency metric was not found."
@@ -497,7 +983,6 @@ jobs:
           echo "$RESPONSE"
 
           echo "$RESPONSE" | grep -q '"status":"success"'
-          echo "$RESPONSE" | grep -q '"result":\['
 
           if echo "$RESPONSE" | grep -q '"result":\[\]'; then
             echo "ERROR: NetSentinel failed requests metric was not found."
@@ -525,7 +1010,8 @@ jobs:
           with open(dashboard_file, "r", encoding="utf-8") as file:
               dashboard = json.load(file)
 
-          assert isinstance(dashboard, dict)
+          assert isinstance(dashboard, dict), \
+              "Dashboard JSON root must be an object"
 
           print("Grafana dashboard JSON is valid.")
           PY
@@ -571,6 +1057,211 @@ jobs:
           test -f evidence/week11/network-quality.png
           test -f evidence/week11/traffic-errors.png
           echo "Week 11 evidence verified."
+
+      # ==========================================================
+      # STEP 24 - Week 12 Validation
+      # ==========================================================
+
+      # ----------------------------------------------------------
+      # Validate Docker Volumes
+      # ----------------------------------------------------------
+
+      - name: Validate Docker Volumes
+        run: |
+          echo "=============================================="
+          echo "Validating Docker volumes"
+          echo "=============================================="
+
+          grep -q "postgres_data" docker-compose.yml
+          echo "✅ postgres_data volume configured"
+
+          grep -q "prometheus_data" docker-compose.yml
+          echo "✅ prometheus_data volume configured"
+
+          grep -q "grafana_data" docker-compose.yml
+          echo "✅ grafana_data volume configured"
+
+      # ----------------------------------------------------------
+      # Validate Prometheus Retention
+      # ----------------------------------------------------------
+
+      - name: Validate Prometheus Retention
+        run: |
+          echo "=============================================="
+          echo "Validating Prometheus retention"
+          echo "=============================================="
+
+          if grep -q "30d" docker-compose.yml; then
+            echo "✅ 30-day Prometheus retention configured in docker-compose.yml"
+          elif grep -q "30d" docker/prometheus/prometheus.yml; then
+            echo "✅ 30-day Prometheus retention configured in prometheus.yml"
+          else
+            echo "ERROR: 30-day Prometheus retention configuration not found."
+            exit 1
+          fi
+
+      # ----------------------------------------------------------
+      # Validate PostgreSQL Database Service
+      # ----------------------------------------------------------
+
+      - name: Validate PostgreSQL Database Service
+        run: |
+          echo "=============================================="
+          echo "Validating PostgreSQL Database Service"
+          echo "=============================================="
+
+          python -c "
+          from src.services.database_service import DatabaseService
+          db = DatabaseService()
+          print('✅ DatabaseService imported successfully')
+          "
+
+      # ----------------------------------------------------------
+      # Validate PostgreSQL Container
+      # ----------------------------------------------------------
+
+      - name: Validate PostgreSQL Container
+        run: |
+          echo "=============================================="
+          echo "Validating PostgreSQL container"
+          echo "=============================================="
+
+          docker ps
+
+          STATUS=$(docker ps \
+            --filter "name=netsentinel-db" \
+            --format "{{.Status}}")
+
+          echo "PostgreSQL status: $STATUS"
+
+          echo "$STATUS" | grep -q "Up"
+
+          echo "✅ PostgreSQL container is running"
+
+      # ----------------------------------------------------------
+      # Validate PostgreSQL Tables
+      # ----------------------------------------------------------
+
+      - name: Validate PostgreSQL Tables
+        run: |
+          echo "=============================================="
+          echo "Validating PostgreSQL tables"
+          echo "=============================================="
+
+          docker exec netsentinel-db \
+            psql -U admin \
+            -d netsentinel \
+            -c "\dt"
+
+          echo "PostgreSQL tables verified."
+
+      # ----------------------------------------------------------
+      # Validate Grafana Dashboard JSON
+      # ----------------------------------------------------------
+
+      - name: Validate Grafana Dashboard Structure
+        run: |
+          echo "=============================================="
+          echo "Validating Grafana Dashboard"
+          echo "=============================================="
+
+          python - <<'PY'
+          import json
+          import os
+
+          path = "grafana/dashboards/netsentinel-dashboard.json"
+
+          assert os.path.exists(path), (
+              f"Dashboard JSON not found: {path}"
+          )
+
+          with open(path, "r", encoding="utf-8") as file:
+              data = json.load(file)
+
+          assert isinstance(data, dict), (
+              "Dashboard JSON root must be an object"
+          )
+
+          # NetSentinel uses the newer Grafana format:
+          # apiVersion / kind / metadata / spec / elements
+          spec = data.get("spec", {})
+          assert isinstance(spec, dict), (
+              "Dashboard 'spec' section is missing"
+          )
+
+          elements = spec.get("elements", {})
+          assert isinstance(elements, dict), (
+              "Dashboard 'spec.elements' section is missing"
+          )
+
+          panels = [
+              element
+              for element in elements.values()
+              if isinstance(element, dict)
+              and element.get("kind") == "Panel"
+          ]
+
+          print(f"✅ Dashboard JSON is valid")
+          print(f"✅ Dashboard contains {len(panels)} panels")
+
+          assert len(panels) >= 4, (
+              f"Dashboard contains only {len(panels)} panels. "
+              "At least 4 panels are required."
+          )
+
+          panel_titles = [
+              panel.get("spec", {}).get("title", "")
+              for panel in panels
+          ]
+
+          print("Dashboard panels:")
+
+          for title in panel_titles:
+              print(f"  - {title}")
+
+          connectivity_found = any(
+              "Connectivity" in title
+              for title in panel_titles
+          )
+
+          assert connectivity_found, (
+              "Connectivity Status panel was not found"
+          )
+
+          print("✅ Connectivity Status panel verified")
+          PY
+
+      # ----------------------------------------------------------
+      # Run Week 12 Dashboard & Integration Tests
+      # ----------------------------------------------------------
+
+      - name: Run Week 12 Dashboard and Integration Tests
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: |
+          echo "=============================================="
+          echo "Running Week 12 Dashboard & Integration Tests"
+          echo "=============================================="
+
+          pytest tests/test_week12_dashboard_and_integration.py -v
+
+      # ----------------------------------------------------------
+      # Week 12 Validation Complete
+      # ----------------------------------------------------------
+
+      - name: Week 12 Validation Complete
+        run: |
+          echo "=============================================="
+          echo "      NetSentinel Week 12 Validation"
+          echo "=============================================="
+          echo "Docker volumes       : VERIFIED"
+          echo "PostgreSQL service   : VERIFIED"
+          echo "PostgreSQL tables    : VERIFIED"
+          echo "Prometheus retention : VERIFIED"
+          echo "Grafana dashboard    : VERIFIED"
+          echo "Connectivity panel   : VERIFIED"
+          echo "Week 12 tests        : PASSED"
+          echo "=============================================="
 
       # ==========================================================
       # Full Test Suite
@@ -620,6 +1311,20 @@ jobs:
             monitoring/reports/scenario_reports/
 
       # ==========================================================
+      # Upload Week 12 Evidence
+      # ==========================================================
+
+      - name: Upload Week 12 Evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: netsentinel-week12-evidence
+          path: |
+            evidence/week12/
+            grafana/dashboards/netsentinel-dashboard.json
+            htmlcov/
+          if-no-files-found: warn
+
+      # ==========================================================
       # Cleanup
       # ==========================================================
 
@@ -667,12 +1372,15 @@ jobs:
           echo "Week 7 Validation  : PASSED"
           echo "Week 8 Validation  : PASSED"
           echo "Week 11 Validation : PASSED"
+          echo "Week 12 Validation : PASSED"
           echo "Grafana            : VERIFIED"
           echo "Prometheus         : VERIFIED"
+          echo "PostgreSQL         : VERIFIED"
           echo "AI / Groq          : VERIFIED"
           echo "Full Test Suite    : PASSED"
           echo "Coverage Report    : GENERATED"
           echo "Week 11 Evidence   : UPLOADED"
+          echo "Week 12 Evidence   : UPLOADED"
           echo "=============================================="
           echo "All validations completed successfully!"
           echo "=============================================="

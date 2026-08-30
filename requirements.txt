@@ -83,3 +83,4 @@ xxhash==3.8.1
 zstandard==0.25.0
 groq
 groq
+psycopg2-binary
