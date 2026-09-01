@@ -5,8 +5,8 @@
     "name": "adqfzbh",
     "namespace": "default",
     "uid": "55a2700c-57f3-44c3-84b6-22ac2f1dba31",
-    "resourceVersion": "1788120457803002",
-    "generation": 6,
+    "resourceVersion": "1788281922214999",
+    "generation": 10,
     "creationTimestamp": "2026-08-30T17:25:24Z",
     "labels": {
       "grafana.app/deprecatedInternalID": "4444048623439872"
@@ -21,7 +21,7 @@
       "grafana.app/sourcePath": "/etc/grafana/dashboards/netsentinel-dashboard.json",
       "grafana.app/sourceTimestamp": "1788113278000",
       "grafana.app/updatedBy": "user:bfwq7qhfuws1sf",
-      "grafana.app/updatedTimestamp": "2026-08-30T20:07:37Z"
+      "grafana.app/updatedTimestamp": "2026-09-01T16:58:42Z"
     }
   },
   "spec": {
@@ -688,6 +688,165 @@
           }
         }
       },
+      "panel-15": {
+        "kind": "Panel",
+        "spec": {
+          "id": 15,
+          "title": "Azure Network Watcher",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "prometheus",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "afwrsc5nlu70gd"
+                      },
+                      "spec": {
+                        "columns": [],
+                        "filters": [],
+                        "format": "table",
+                        "global_query_id": "",
+                        "pagination_mode": "none",
+                        "parser": "backend",
+                        "root_selector": "",
+                        "source": "url",
+                        "type": "json",
+                        "url": "/networkwatcher/summary",
+                        "url_options": {
+                          "data": "",
+                          "method": "GET"
+                        }
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "table",
+            "version": "13.2.0",
+            "spec": {
+              "options": {
+                "cellHeight": "lg",
+                "showHeader": true
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "unit": "ms",
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": 0,
+                        "color": "green"
+                      },
+                      {
+                        "value": 80,
+                        "color": "red"
+                      }
+                    ]
+                  },
+                  "color": {
+                    "mode": "thresholds"
+                  },
+                  "custom": {
+                    "align": "auto",
+                    "cellOptions": {
+                      "type": "auto"
+                    },
+                    "footer": {
+                      "reducers": []
+                    },
+                    "inspect": false,
+                    "styleField": "login_api",
+                    "wrapHeaderText": false,
+                    "wrapText": true
+                  }
+                },
+                "overrides": [
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "login_api"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.width",
+                        "value": 467
+                      }
+                    ]
+                  },
+                  {
+                    "matcher": {
+                      "id": "byName",
+                      "scope": "series",
+                      "options": "payment_api"
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.width",
+                        "value": 467
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "panel-16": {
+        "kind": "Panel",
+        "spec": {
+          "id": 16,
+          "title": "Azure Network Watcher Summary",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "text",
+            "version": "13.2.0",
+            "spec": {
+              "options": {
+                "code": {
+                  "language": "plaintext",
+                  "showLineNumbers": false,
+                  "showMiniMap": false
+                },
+                "content": "# Title\n\nFor markdown syntax help: [commonmark.org/help](https://commonmark.org/help/)## 🔍 Azure Network Watcher Status\n\n**Mode: Simulation (Azure access pending)**\n\n---\n\n| Path | Status | Latency |\n|---|---|---:|\n| ✅ Login API | Reachable | ~10 ms |\n| ✅ Product API | Reachable | ~8 ms |\n| ✅ Payment API | Reachable | ~9 ms |\n\n---\n\n**Overall Health: 🟢 HEALTHY**  \n**Paths Checked: 3/3 Reachable**\n\n*Results are based on NetSentinel local simulation.*\n\n*Azure Network Watcher integration is currently simulated.*",
+                "mode": "markdown"
+              },
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
       "panel-2": {
         "kind": "Panel",
         "spec": {
@@ -1119,13 +1278,39 @@
                     {
                       "kind": "GridLayoutItem",
                       "spec": {
-                        "x": 5,
+                        "x": 0,
                         "y": 8,
                         "width": 12,
                         "height": 8,
                         "element": {
                           "kind": "ElementReference",
                           "name": "panel-14"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 12,
+                        "y": 8,
+                        "width": 12,
+                        "height": 8,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-15"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 0,
+                        "y": 16,
+                        "width": 12,
+                        "height": 8,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-16"
                         }
                       }
                     }

@@ -1,0 +1,21 @@
+{
+  "benchmark_at": "2026-09-01T18:16:55.860323",
+  "provider": "Groq",
+  "model": "openai/gpt-oss-20b",
+  "test_data": {
+    "average_latency_ms": 145.5,
+    "p95_latency_ms": 320.0,
+    "p99_latency_ms": 480.0,
+    "error_rate_percent": 2.5,
+    "requests_per_second": 8.5,
+    "total_requests": 2550,
+    "concurrent_users": 50,
+    "test_duration": "5 minutes"
+  },
+  "inference_time_seconds": 1.32,
+  "prompt_tokens": 240,
+  "completion_tokens": 765,
+  "total_tokens": 1005,
+  "analysis": "BOTTLENECK: Server\u2011side processing / database latency  \nSEVERITY: CRITICAL  \nROOT CAUSE: Insufficient resources cause timeouts and errors under load.  \nIMMEDIATE ACTION 1: Scale CPU/memory or optimize queries to reduce latency.  \nIMMEDIATE ACTION 2: Implement rate limiting or reduce concurrent users to lower error rate.  \nPERFORMANCE VERDICT: FAIL",
+  "status": "success"
+}

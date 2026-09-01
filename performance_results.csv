@@ -1,0 +1,3 @@
+id,test_type,average_latency_ms,p95_latency_ms,total_requests,failed_requests,packet_loss_percent,error_rate_percent,created_at
+1,k6,30.98,45.04,75,0,0,0,2026-08-30 09:53:03.327763
+2,k6,30.983070493333337,45.043619299999996,75,0,0,0,2026-08-30 09:55:38.843188

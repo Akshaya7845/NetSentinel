@@ -1,0 +1,53 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0
+rootdir: /home/akshaya/NetSentinel
+configfile: pytest.ini
+plugins: langsmith-0.9.7, cov-7.1.0, json-report-1.5.0, anyio-4.14.1, metadata-3.1.1
+collected 67 items
+
+test_groq.py .                                                           [  1%]
+tests/connectivity_test.py ...                                           [  5%]
+tests/test_ai.py ...                                                     [ 10%]
+tests/test_analysis.py .....                                             [ 17%]
+tests/test_grafana.py .......                                            [ 28%]
+tests/test_integration.py .......                                        [ 38%]
+tests/test_scenario_runner.py .                                          [ 40%]
+tests/test_unit.py .........                                             [ 53%]
+tests/test_week12_dashboard_and_integration.py .......................   [ 88%]
+tests/test_week13.py ........                                            [100%]
+
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.12.3-final-0 ________________
+
+Name                                      Stmts   Miss  Cover   Missing
+-----------------------------------------------------------------------
+src/__init__.py                               0      0   100%
+src/ai/__init__.py                            0      0   100%
+src/ai/benchmark.py                          60     60     0%   1-211
+src/ai/llm_service.py                        22      1    95%   21
+src/ai/prompt_builder.py                     10      0   100%
+src/ai/recommendation_service.py              0      0   100%
+src/ai/report_generator.py                   42     12    71%   74, 79, 105, 110, 144-175
+src/ai/scenario_runner.py                    32      6    81%   114-167
+src/analytics/__init__.py                     0      0   100%
+src/analytics/analysis_service.py            25      0   100%
+src/analytics/chart_service.py               39     11    72%   23-44
+src/api/__init__.py                           0      0   100%
+src/api/main.py                             146    146     0%   1-635
+src/metrics/__init__.py                       0      0   100%
+src/metrics/prometheus_metrics.py            16     16     0%   1-75
+src/models/__init__.py                        0      0   100%
+src/models/network_status.py                  9      9     0%   1-11
+src/models/performance_summary.py             8      8     0%   1-10
+src/models/postman_summary.py                 7      7     0%   1-9
+src/network/__init__.py                       0      0   100%
+src/network/azure_network_watcher.py         25     25     0%   1-101
+src/services/__init__.py                      0      0   100%
+src/services/database_service.py             96     64    33%   35-45, 51-73, 93-125, 143-171, 189-217, 232-261, 268-290, 297-322, 342, 383-408, 415-437
+src/services/docker_service.py               18     18     0%   1-44
+src/services/k6_service.py                   27      2    93%   13, 27
+src/services/network_watcher_service.py      21     21     0%   1-48
+src/services/postman_service.py              16      2    88%   13, 27
+-----------------------------------------------------------------------
+TOTAL                                       619    408    34%
+======================== 67 passed in 96.97s (0:01:36) =========================

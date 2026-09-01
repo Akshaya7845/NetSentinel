@@ -1,12 +1,8 @@
-**Executive Performance Summary**
-
-- **Overall Health:** 100 % uptime with zero failed requests, 0 % packet loss, and 0 % error rate – the network is fully healthy.  
-- **Latency Profile:** Average latency 32 ms, min 29.8 ms, max 35.3 ms, P95 45.5 ms – all well below typical SLA thresholds.  
-- **Postman Response:** 68 ms average, noticeably higher than network latency, indicating application‑level processing overhead.  
-- **Traffic Volume:** 3,783 requests processed without degradation, confirming capacity sufficiency.  
-- **Observations:** Consistent latency and zero failures demonstrate robust routing and congestion management.  
-- **Recommendations:**  
-  1. **Track Postman response times** to detect any future drift.  
-  2. **Maintain regular health checks** (latency, packet loss, error rate) to pre‑empt issues.  
-  3. **Profile application logic** to reduce processing time and align Postman response with network latency.  
-- **Conclusion:** The network remains in excellent condition with no critical issues.
+- **Overall health:** Excellent – zero failures, 0 % packet loss, 0 % error rate.  
+- **Latency:** Avg 32 ms, min 29.8 ms, max 35.3 ms; P95 45.5 ms – well below typical SLA thresholds.  
+- **Postman response time:** 68 ms, indicating ~35 ms of application‑processing overhead.  
+- **Traffic volume:** 3,783 requests with 0 failures; no anomalies detected, demonstrating robust handling.  
+- **Recommendation 1:** Profile and refactor backend logic to shave ~30 ms from response times.  
+- **Recommendation 2:** Implement continuous latency monitoring with alerts on P95 > 50 ms.  
+- **Recommendation 3:** Conduct periodic load tests to validate performance under peak loads.  
+- **Conclusion:** The network is performing optimally, with minor application‑level improvements possible.
