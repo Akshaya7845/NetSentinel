@@ -1,0 +1,46 @@
+**1. Overall Health**  
+- **Latency**: Avg 95 ms, Max 180 ms, P95 241 ms – acceptable for most services but the P95 spike indicates intermittent delays.  
+- **Error Rate**: 9.2 % (450/5000) – far above typical thresholds (<1 %).  
+- **Throughput**: Not provided; assume 5000 req/s is the load.  
+- **Response Time**: Postman 311 ms – higher than average latency, suggesting client‑side or edge delays.  
+- **Conclusion**: Network is *unhealthy* – high error rate dominates.
+
+**2. Error Rate Analysis**  
+- 450 failed requests out of 5000 → 9.2 % error rate.  
+- Failure likely correlates with high latency periods (P95 > 240 ms).  
+- No breakdown of error types; assume mixed 4xx/5xx.
+
+**3. Performance Impact**  
+- Users experience >300 ms response times and frequent failures.  
+- Throughput may be throttled by retry logic, further increasing load.  
+- SLA violations likely if thresholds are <5 % error.
+
+**4. Possible Root Causes**  
+| Category | Likely Issues | Supporting Evidence |
+|----------|---------------|---------------------|
+| **Network congestion** | Packet loss, jitter | P95 latency spike, Postman >300 ms |
+| **Server overload** | CPU/memory saturation | High latency + error rate |
+| **Application bugs** | Unhandled exceptions | 4xx/5xx errors (unknown) |
+| **Infrastructure misconfiguration** | Incorrect routing, ACLs | Sudden error spikes |
+| **External dependencies** | Downstream service latency | Postman >310 ms |
+
+**5. Recommended Actions**  
+1. **Immediate Mitigation**  
+   - Enable circuit breaker / retry back‑off to reduce load.  
+   - Temporarily throttle traffic if possible.  
+2. **Diagnostics**  
+   - Capture packet traces on ingress/egress points.  
+   - Review server logs for 5xx errors during high‑latency windows.  
+   - Check CPU/memory metrics on application nodes.  
+3. **Capacity & Scaling**  
+   - Scale out application instances if CPU >80 % during spikes.  
+   - Increase bandwidth or adjust QoS if congestion detected.  
+4. **Configuration Review**  
+   - Verify routing tables, ACLs, and load‑balancer health checks.  
+   - Ensure TLS termination isn’t causing bottlenecks.  
+5. **Monitoring Enhancements**  
+   - Add per‑endpoint latency and error metrics.  
+   - Set alert thresholds: latency >200 ms, error rate >2 %.  
+
+**6. Final Conclusion**  
+The network is in a degraded state with a high error rate and significant latency spikes. Immediate throttling and diagnostics are required to isolate whether the root cause lies in congestion, server overload, or application faults. Once identified, scaling, configuration fixes, and enhanced monitoring will restore healthy performance.

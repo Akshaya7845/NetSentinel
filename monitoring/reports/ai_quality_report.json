@@ -1,0 +1,94 @@
+{
+    "total_reports": 5,
+    "passed": 5,
+    "review": 0,
+    "failed": 0,
+    "average_quality_score": 100.0,
+    "reports": [
+        {
+            "scenario": "Comparative Analysis",
+            "report_file": "monitoring/reports/scenario_reports_v2/comparative_analysis_report.txt",
+            "status": "PASS",
+            "score": 100.0,
+            "checks": {
+                "file_exists": true,
+                "not_empty": true,
+                "minimum_length": true,
+                "scenario_mentioned": true,
+                "metric_coverage": true,
+                "structured_analysis": true,
+                "no_api_failure_message": true,
+                "no_obvious_failure_text": true
+            },
+            "issues": []
+        },
+        {
+            "scenario": "Healthy Network",
+            "report_file": "monitoring/reports/scenario_reports_v2/healthy_network_report.txt",
+            "status": "PASS",
+            "score": 100.0,
+            "checks": {
+                "file_exists": true,
+                "not_empty": true,
+                "minimum_length": true,
+                "scenario_mentioned": true,
+                "metric_coverage": true,
+                "structured_analysis": true,
+                "no_api_failure_message": true,
+                "no_obvious_failure_text": true
+            },
+            "issues": []
+        },
+        {
+            "scenario": "High Error Rate",
+            "report_file": "monitoring/reports/scenario_reports_v2/high_error_rate_report.txt",
+            "status": "PASS",
+            "score": 100.0,
+            "checks": {
+                "file_exists": true,
+                "not_empty": true,
+                "minimum_length": true,
+                "scenario_mentioned": true,
+                "metric_coverage": true,
+                "structured_analysis": true,
+                "no_api_failure_message": true,
+                "no_obvious_failure_text": true
+            },
+            "issues": []
+        },
+        {
+            "scenario": "High Latency",
+            "report_file": "monitoring/reports/scenario_reports_v2/high_latency_report.txt",
+            "status": "PASS",
+            "score": 100.0,
+            "checks": {
+                "file_exists": true,
+                "not_empty": true,
+                "minimum_length": true,
+                "scenario_mentioned": true,
+                "metric_coverage": true,
+                "structured_analysis": true,
+                "no_api_failure_message": true,
+                "no_obvious_failure_text": true
+            },
+            "issues": []
+        },
+        {
+            "scenario": "Throughput Degradation",
+            "report_file": "monitoring/reports/scenario_reports_v2/throughput_degradation_report.txt",
+            "status": "PASS",
+            "score": 100.0,
+            "checks": {
+                "file_exists": true,
+                "not_empty": true,
+                "minimum_length": true,
+                "scenario_mentioned": true,
+                "metric_coverage": true,
+                "structured_analysis": true,
+                "no_api_failure_message": true,
+                "no_obvious_failure_text": true
+            },
+            "issues": []
+        }
+    ]
+}

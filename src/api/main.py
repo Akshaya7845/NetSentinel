@@ -24,6 +24,8 @@ from src.services.network_watcher_service import check_connectivity
 from src.services.database_service import DatabaseService
 
 from src.ai.report_generator import ReportGenerator
+from src.ai.scenario_runner_v2 import ScenarioRunnerV2
+from src.ai.quality_validator import AIQualityValidator
 
 from src.metrics.prometheus_metrics import (
     REQUEST_COUNT,
@@ -639,3 +641,256 @@ def get_detailed_report():
             encoding="utf-8"
         ),
     }
+
+# ============================================================
+# Week 14 - AI Scenario Runner
+# ============================================================
+
+@app.post("/ai/scenarios/run-all")
+def run_all_ai_scenarios():
+
+    try:
+
+        runner = ScenarioRunnerV2()
+
+        results = runner.run_all_scenarios()
+
+        saved_to_database = []
+
+        for result in results:
+
+            if result.get("status") != "success":
+                continue
+
+            scenario_file = Path(
+                result["scenario_file"]
+            )
+
+            report_file = Path(
+                result["report_file"]
+            )
+
+            with open(
+                scenario_file,
+                "r",
+                encoding="utf-8",
+            ) as file:
+                scenario_data = __import__("json").load(file)
+
+            ai_report = report_file.read_text(
+                encoding="utf-8"
+            )
+
+            result_id = db.insert_scenario_ai_result(
+                scenario_name=scenario_data["scenario"],
+                average_latency_ms=scenario_data.get(
+                    "average_latency"
+                ),
+                maximum_latency_ms=scenario_data.get(
+                    "maximum_latency"
+                ),
+                minimum_latency_ms=scenario_data.get(
+                    "minimum_latency"
+                ),
+                p95_latency_ms=scenario_data.get(
+                    "p95_latency"
+                ),
+                total_requests=scenario_data.get(
+                    "total_requests",
+                    0,
+                ),
+                failed_requests=scenario_data.get(
+                    "failed_requests",
+                    0,
+                ),
+                error_rate_percent=scenario_data.get(
+                    "error_rate",
+                    0,
+                ),
+                postman_response_time_ms=scenario_data.get(
+                    "postman_response_time"
+                ),
+                throughput_mbps=scenario_data.get(
+                    "throughput_mbps"
+                ),
+                baseline_throughput_mbps=scenario_data.get(
+                    "baseline_throughput_mbps"
+                ),
+                ai_report=ai_report,
+            )
+
+            saved_to_database.append(
+                {
+                    "scenario": scenario_data["scenario"],
+                    "database_id": result_id,
+                }
+            )
+
+        return {
+            "status": "success",
+            "total_scenarios": len(results),
+            "results": results,
+            "database": {
+                "status": "success",
+                "saved_results": len(
+                    saved_to_database
+                ),
+                "records": saved_to_database,
+            },
+        }
+
+    except Exception as error:
+
+        return {
+            "status": "error",
+            "message": str(error),
+        }
+
+
+# ============================================================
+# Week 14 - AI Scenario Quality Validation
+# ============================================================
+
+@app.post("/ai/scenarios/validate")
+def validate_ai_scenarios():
+
+    try:
+
+        validator = AIQualityValidator()
+
+        validation = validator.validate_all()
+
+        validator.save_quality_report()
+
+        saved_to_database = []
+
+        for report in validation.get(
+            "reports",
+            [],
+        ):
+
+            result_id = db.insert_ai_quality_result(
+                scenario_name=report["scenario"],
+                report_file=report.get(
+                    "report_file"
+                ),
+                status=report["status"],
+                quality_score=report["score"],
+                validation_checks=report.get(
+                    "checks",
+                    {},
+                ),
+                issues=report.get(
+                    "issues",
+                    [],
+                ),
+            )
+
+            saved_to_database.append(
+                {
+                    "scenario": report["scenario"],
+                    "database_id": result_id,
+                    "status": report["status"],
+                    "quality_score": report["score"],
+                }
+            )
+
+        return {
+            "status": "success",
+            "validation": validation,
+            "database": {
+                "status": "success",
+                "saved_results": len(
+                    saved_to_database
+                ),
+                "records": saved_to_database,
+            },
+        }
+
+    except Exception as error:
+
+        return {
+            "status": "error",
+            "message": str(error),
+        }
+
+
+# ============================================================
+# Week 14 - List AI Scenarios
+# ============================================================
+
+@app.get("/ai/scenarios/list")
+def list_ai_scenarios():
+
+    try:
+
+        runner = ScenarioRunnerV2()
+
+        scenario_files = sorted(
+            runner.scenario_folder.glob("*.json")
+        )
+
+        scenarios = []
+
+        for scenario_path in scenario_files:
+
+            data = runner.load_scenario(
+                scenario_path.name
+            )
+
+            scenarios.append(
+                {
+                    "scenario": data.get(
+                        "scenario",
+                        scenario_path.stem,
+                    ),
+                    "file": str(
+                        scenario_path
+                    ),
+                }
+            )
+
+        return {
+            "status": "success",
+            "total_scenarios": len(scenarios),
+            "scenarios": scenarios,
+        }
+
+    except Exception as error:
+
+        return {
+            "status": "error",
+            "message": str(error),
+        }
+
+
+# ============================================================
+# Week 14 - AI Quality Report
+# ============================================================
+
+@app.get("/ai/quality-report")
+def get_ai_quality_report():
+
+    try:
+
+        validator = AIQualityValidator()
+
+        validation = validator.validate_all()
+
+        database_summary = (
+            db.get_latest_ai_quality_summary()
+        )
+
+        return {
+            "status": "success",
+            "quality_report": validation,
+            "database_summary": database_summary,
+        }
+
+    except Exception as error:
+
+        return {
+            "status": "error",
+            "message": str(error),
+        }
+

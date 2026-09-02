@@ -1,0 +1,62 @@
+**1. Overall Health**  
+- **Latency**: Severe degradation – average 165 ms, P95 341 ms vs baseline < 40 ms.  
+- **Error Rate**: 4.1 % (≈ 605/15 000) – far above the 0 % baseline.  
+- **Throughput**: 65 Mbps vs baseline 100 Mbps – ~35 % drop.  
+- **Response Time**: Postman 396 ms, far exceeding baseline.  
+
+*Result*: **Degraded** network health.
+
+---
+
+**2. Baseline vs Current Comparison**
+
+| Metric | Baseline | Current | Δ (Current – Baseline) | Comment |
+|--------|----------|---------|------------------------|---------|
+| Avg Latency (ms) | 28.5 | 165.2 | +136.7 | 5.8× increase |
+| P95 Latency (ms) | 40.1 | 340.5 | +300.4 | 8.5× increase |
+| Error Rate (%) | 0.0 | 4.1 | +4.1 | Significant |
+| Throughput (Mbps) | 100.0 | 65.0 | –35.0 | 35 % drop |
+| Failed Requests | 0 | 605 | +605 | 4.0 % failure rate |
+| Postman RT (ms) | – | 395.6 | – | 14× higher than baseline avg |
+
+---
+
+**3. Major Performance Changes**
+
+1. **Latency Spike** – both average and tail latency are > 5× baseline.  
+2. **Throughput Reduction** – 35 % lower, indicating possible bandwidth bottleneck.  
+3. **Error Surge** – 4 % error rate, correlating with 605 failed requests.  
+4. **Response Time Increase** – Postman RT ~400 ms, confirming end‑to‑end delay.
+
+---
+
+**4. Potential Areas of Concern**
+
+| Area | Likely Cause | Evidence |
+|------|--------------|----------|
+| Network Congestion | Limited bandwidth, saturated links | Throughput drop, high latency |
+| Server Overload | CPU/memory saturation | High tail latency, error spikes |
+| Packet Loss / Jitter | Poor link quality | Elevated latency, increased errors |
+| Application Bottleneck | Inefficient code, DB locks | Postman RT, P95 latency |
+| QoS / Traffic Shaping | Misconfigured policies | Latency spikes, throughput drop |
+
+---
+
+**5. Recommended Actions**
+
+| Action | Priority | Rationale |
+|--------|----------|-----------|
+| **Bandwidth Upgrade / Link Redesign** | High | Restore 100 Mbps baseline throughput. |
+| **Traffic Analysis (Wireshark / NetFlow)** | High | Identify packet loss, retransmissions, and congestion points. |
+| **Server Capacity Scaling** | High | Add CPU/Memory or horizontal scaling to reduce tail latency. |
+| **Application Profiling** | Medium | Locate slow database queries or blocking calls. |
+| **QoS Re‑configuration** | Medium | Prioritize critical traffic, limit bursty flows. |
+| **Error Logging & Alerting** | Medium | Capture failure reasons (timeouts, 5xx, etc.). |
+| **Load Balancer Health Checks** | Medium | Ensure healthy nodes, remove failed instances. |
+| **Postman Test Re‑run** | Low | Verify improvements after changes. |
+
+---
+
+**6. Final Conclusion**
+
+The current network performance is **degraded** relative to the baseline. Latency has increased by more than five times, throughput has dropped by 35 %, and error rates have risen to 4 %. Immediate bandwidth expansion, congestion diagnostics, and server scaling are required to restore baseline health. Once these actions are implemented, re‑measure latency, throughput, and error rate to confirm recovery.

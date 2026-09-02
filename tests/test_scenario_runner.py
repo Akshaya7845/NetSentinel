@@ -13,7 +13,7 @@ def test_run_all_scenarios():
 
     reports = runner.run_all_scenarios()
 
-    assert len(reports) == 3
+    assert len(reports) == 5
 
     for report in reports:
 

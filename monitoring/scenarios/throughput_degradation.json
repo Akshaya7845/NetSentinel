@@ -1,0 +1,19 @@
+{
+    "scenario": "Throughput Degradation",
+
+    "average_latency": 145.6,
+    "maximum_latency": 280.4,
+    "minimum_latency": 85.2,
+    "p95_latency": 310.7,
+
+    "total_requests": 5000,
+    "failed_requests": 120,
+
+    "packet_loss": 2.1,
+    "error_rate": 2.4,
+
+    "postman_response_time": 420.8,
+
+    "throughput_mbps": 42.5,
+    "baseline_throughput_mbps": 100.0
+}

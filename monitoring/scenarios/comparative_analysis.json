@@ -1,0 +1,31 @@
+{
+    "scenario": "Comparative Analysis",
+
+    "average_latency": 165.2,
+    "maximum_latency": 320.8,
+    "minimum_latency": 28.5,
+    "p95_latency": 340.5,
+
+    "total_requests": 15000,
+    "failed_requests": 605,
+
+    "packet_loss": 2.1,
+    "error_rate": 4.1,
+
+    "postman_response_time": 395.6,
+
+    "comparison": {
+        "baseline": {
+            "average_latency": 28.5,
+            "p95_latency": 40.1,
+            "error_rate": 0.0,
+            "throughput_mbps": 100.0
+        },
+        "current": {
+            "average_latency": 165.2,
+            "p95_latency": 340.5,
+            "error_rate": 4.1,
+            "throughput_mbps": 65.0
+        }
+    }
+}

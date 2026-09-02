@@ -1,0 +1,33 @@
+**1. Overall Health**  
+- **Excellent** – Zero failed requests, 0 % error rate, and latency metrics well within acceptable thresholds.  
+
+**2. Performance Summary**  
+| Metric | Value | Comment |
+|--------|-------|---------|
+| Avg Latency | 28.5 ms | Low, stable |
+| Max Latency | 35.2 ms | Slightly higher than avg but still < 50 ms |
+| Min Latency | 24.8 ms | Consistent baseline |
+| P95 Latency | 40.1 ms | 95 % of requests < 40 ms |
+| Total Requests | 5 000 | Normal traffic volume |
+| Failed Requests | 0 | No failures |
+| Error Rate | 0.0 % | No errors |
+| Postman Response Time | 55.4 ms | Slightly higher than server‑side latency, likely client‑side overhead |
+
+**3. Key Observations**  
+- Latency distribution is tight; only ~7 % of requests exceed 35 ms.  
+- P95 latency (40.1 ms) indicates occasional spikes but still well below typical SLA thresholds (e.g., 100 ms).  
+- Postman’s response time (~55 ms) is ~27 ms higher than server‑side latency, suggesting client‑side processing or network path variance.  
+- Zero failures and 0 % error rate confirm healthy connectivity and application behavior.
+
+**4. Recommended Monitoring Actions**  
+| Action | Rationale |
+|--------|-----------|
+| **Continue baseline monitoring** | Maintain visibility of latency, error rate, and throughput. |
+| **Add percentile monitoring (P90, P99)** | Detect subtle shifts in tail latency before they impact users. |
+| **Track Postman vs. API latency** | Identify client‑side or network path differences; investigate if Postman’s environment changes. |
+| **Set alert thresholds at 80 % of P95** (≈ 32 ms) | Early warning for latency drift. |
+| **Log request metadata (e.g., endpoint, payload size)** | Correlate spikes with specific traffic patterns. |
+| **Periodic load testing** | Validate that the baseline remains stable under increased load. |
+
+**5. Final Conclusion**  
+The network is operating in a healthy, low‑latency state with no errors or failures. Current metrics comfortably meet performance expectations. Maintain baseline monitoring, add finer percentile tracking, and keep alert thresholds tuned to early latency drift. No immediate remedial actions required.

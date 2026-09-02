@@ -13,7 +13,7 @@
 #     steps:
 
 #       # ==========================================================
-#       # Repository Setup
+#       # STEP 1 - Repository Setup
 #       # ==========================================================
 
 #       - name: Checkout Repository
@@ -25,17 +25,17 @@
 #           python-version: "3.12"
 
 #       # ==========================================================
-#       # Install Dependencies
+#       # STEP 2 - Install Dependencies
 #       # ==========================================================
 
 #       - name: Install Dependencies
 #         run: |
 #           python -m pip install --upgrade pip
 #           pip install -r requirements.txt
-#           pip install pytest pytest-cov uvicorn requests groq
+#           pip install pytest pytest-cov pytest-json-report uvicorn requests groq
 
 #       # ==========================================================
-#       # Verify Project Structure
+#       # STEP 3 - Verify Project Structure
 #       # ==========================================================
 
 #       - name: Verify Project Structure
@@ -48,11 +48,13 @@
 #           test -d src/ai
 #           test -d src/api
 #           test -d src/services
+#           test -d src/network
 #           test -d grafana
+
 #           echo "✅ Project structure verified."
 
 #       # ==========================================================
-#       # Verify Test Files
+#       # STEP 4 - Verify Test Files
 #       # ==========================================================
 
 #       - name: Verify Test Files
@@ -65,10 +67,13 @@
 #           test -f tests/test_scenario_runner.py
 #           test -f tests/test_grafana.py
 #           test -f tests/test_week12_dashboard_and_integration.py
+#           test -f tests/test_week13.py
+#           test -f test_groq.py
+
 #           echo "✅ All test files verified."
 
 #       # ==========================================================
-#       # Verify Monitoring Files
+#       # STEP 5 - Verify Monitoring Files
 #       # ==========================================================
 
 #       - name: Verify k6 Scripts
@@ -76,28 +81,50 @@
 #           test -f monitoring/k6/smoke-test.js
 #           test -f monitoring/k6/latency-test.js
 #           test -f monitoring/k6/load-test.js
+
 #           echo "✅ k6 scripts verified."
 
 #       - name: Verify Postman Collection
 #         run: |
 #           test -f "monitoring/postman/NetSentinel API Tests.postman_collection.json"
+
 #           echo "✅ Postman collection verified."
 
 #       # ==========================================================
-#       # Docker Compose Configuration
+#       # STEP 6 - Verify Week 13 AI Files
+#       # ==========================================================
+
+#       - name: Verify Week 13 AI Files
+#         run: |
+#           test -f src/ai/benchmark.py
+#           test -f src/ai/llm_service.py
+#           test -f src/ai/prompt_builder.py
+#           test -f test_groq.py
+
+#           echo "✅ Week 13 AI files verified."
+
+#       # ==========================================================
+#       # STEP 7 - Verify Azure Network Watcher Files
+#       # ==========================================================
+
+#       - name: Verify Azure Network Watcher
+#         run: |
+#           test -f src/network/azure_network_watcher.py
+
+#           echo "✅ Azure Network Watcher module verified."
+
+#       # ==========================================================
+#       # STEP 8 - Docker Compose Configuration
 #       # ==========================================================
 
 #       - name: Validate Docker Compose Configuration
 #         run: |
 #           docker compose config -q
+
 #           echo "✅ Docker Compose configuration is valid."
 
 #       # ==========================================================
-#       # STEP 1
-#       # Start Docker Services BEFORE FastAPI
-#       #
-#       # This is important because the FastAPI integration
-#       # endpoints use PostgreSQL.
+#       # STEP 9 - Start Docker Services
 #       # ==========================================================
 
 #       - name: Start Docker Services
@@ -113,8 +140,7 @@
 #           docker compose ps
 
 #       # ==========================================================
-#       # STEP 2
-#       # Wait for PostgreSQL
+#       # STEP 10 - Wait for PostgreSQL
 #       # ==========================================================
 
 #       - name: Wait for PostgreSQL
@@ -146,8 +172,7 @@
 #           fi
 
 #       # ==========================================================
-#       # STEP 3
-#       # Verify PostgreSQL Tables
+#       # STEP 11 - Verify PostgreSQL Tables
 #       # ==========================================================
 
 #       - name: Verify PostgreSQL Tables
@@ -162,8 +187,7 @@
 #           echo "✅ PostgreSQL database is accessible."
 
 #       # ==========================================================
-#       # STEP 4
-#       # Validate Docker Volumes
+#       # STEP 12 - Validate Docker Volumes
 #       # ==========================================================
 
 #       - name: Validate Docker Volumes
@@ -174,18 +198,23 @@
 
 #           docker volume ls
 
-#           docker volume ls --format "{{.Name}}" | grep -q "^netsentinel_grafana_data$"
+#           docker volume ls --format "{{.Name}}" | \
+#             grep -q "^netsentinel_grafana_data$"
+
 #           echo "✅ grafana_data volume"
 
-#           docker volume ls --format "{{.Name}}" | grep -q "^netsentinel_postgres_data$"
+#           docker volume ls --format "{{.Name}}" | \
+#             grep -q "^netsentinel_postgres_data$"
+
 #           echo "✅ postgres_data volume"
 
-#           docker volume ls --format "{{.Name}}" | grep -q "^netsentinel_prometheus_data$"
+#           docker volume ls --format "{{.Name}}" | \
+#             grep -q "^netsentinel_prometheus_data$"
+
 #           echo "✅ prometheus_data volume"
 
 #       # ==========================================================
-#       # STEP 5
-#       # Validate Prometheus 30-Day Retention
+#       # STEP 13 - Validate Prometheus 30-Day Retention
 #       # ==========================================================
 
 #       - name: Validate Prometheus Retention
@@ -203,8 +232,7 @@
 #           echo "✅ Prometheus 30-day retention configured."
 
 #       # ==========================================================
-#       # STEP 6
-#       # Wait for Prometheus
+#       # STEP 14 - Wait for Prometheus
 #       # ==========================================================
 
 #       - name: Wait for Prometheus
@@ -236,8 +264,7 @@
 #           fi
 
 #       # ==========================================================
-#       # STEP 7
-#       # Wait for Grafana
+#       # STEP 15 - Wait for Grafana
 #       # ==========================================================
 
 #       - name: Wait for Grafana
@@ -269,8 +296,7 @@
 #           fi
 
 #       # ==========================================================
-#       # STEP 8
-#       # Start FastAPI AFTER PostgreSQL is ready
+#       # STEP 16 - Start FastAPI Server
 #       # ==========================================================
 
 #       - name: Start FastAPI Server
@@ -341,30 +367,29 @@
 #           echo "=================================="
 
 #       # ==========================================================
-#       # STEP 9
-#       # FastAPI Health Validation
+#       # STEP 17 - FastAPI Health Validation
 #       # ==========================================================
 
 #       - name: Verify Health Endpoint
 #         run: |
 #           curl --fail http://localhost:8000/health
+
 #           echo
 #           echo "✅ Health endpoint verified."
 
 #       # ==========================================================
-#       # STEP 10
-#       # FastAPI Metrics Validation
+#       # STEP 18 - FastAPI Metrics Validation
 #       # ==========================================================
 
 #       - name: Verify Metrics Endpoint
 #         run: |
 #           curl --fail http://localhost:8000/metrics
+
 #           echo
 #           echo "✅ Metrics endpoint verified."
 
 #       # ==========================================================
-#       # STEP 11
-#       # Run Unit Tests
+#       # STEP 19 - Run Unit Tests
 #       # ==========================================================
 
 #       - name: Run Unit Tests
@@ -372,8 +397,7 @@
 #           pytest tests/test_unit.py -v
 
 #       # ==========================================================
-#       # STEP 12
-#       # Run Connectivity Tests
+#       # STEP 20 - Run Connectivity Tests
 #       # ==========================================================
 
 #       - name: Run Connectivity Tests
@@ -381,10 +405,7 @@
 #           pytest tests/connectivity_test.py -v
 
 #       # ==========================================================
-#       # STEP 13
-#       # Run Integration Tests
-#       #
-#       # Docker + PostgreSQL are now running BEFORE this step.
+#       # STEP 21 - Run Integration Tests
 #       # ==========================================================
 
 #       - name: Run Integration Tests
@@ -394,8 +415,7 @@
 #           pytest tests/test_integration.py -v
 
 #       # ==========================================================
-#       # STEP 14
-#       # Run Analytics Tests
+#       # STEP 22 - Run Analytics Tests
 #       # ==========================================================
 
 #       - name: Run Analytics Tests
@@ -403,8 +423,7 @@
 #           pytest tests/test_analysis.py -v
 
 #       # ==========================================================
-#       # STEP 15
-#       # Generate Analytics Charts
+#       # STEP 23 - Generate Analytics Charts
 #       # ==========================================================
 
 #       - name: Generate Analytics Charts
@@ -412,8 +431,7 @@
 #           python test_chart.py
 
 #       # ==========================================================
-#       # STEP 16
-#       # Verify Analytics Charts
+#       # STEP 24 - Verify Generated Charts
 #       # ==========================================================
 
 #       - name: Verify Generated Charts
@@ -427,8 +445,7 @@
 #           echo "✅ Analytics charts generated successfully."
 
 #       # ==========================================================
-#       # STEP 17
-#       # Verify Groq API Secret
+#       # STEP 25 - Verify Groq API Secret
 #       # ==========================================================
 
 #       - name: Verify Groq API Secret
@@ -443,8 +460,7 @@
 #           echo "✅ GROQ_API_KEY is configured."
 
 #       # ==========================================================
-#       # STEP 18
-#       # Run AI Tests
+#       # STEP 26 - Run AI Tests
 #       # ==========================================================
 
 #       - name: Run AI Tests
@@ -454,8 +470,7 @@
 #           pytest tests/test_ai.py -v
 
 #       # ==========================================================
-#       # STEP 19
-#       # Run Scenario Tests
+#       # STEP 27 - Run Scenario Tests
 #       # ==========================================================
 
 #       - name: Run Scenario Validation
@@ -465,8 +480,7 @@
 #           pytest tests/test_scenario_runner.py -v
 
 #       # ==========================================================
-#       # STEP 20
-#       # Generate AI Reports
+#       # STEP 28 - Generate AI Reports
 #       # ==========================================================
 
 #       - name: Generate AI Reports
@@ -476,8 +490,7 @@
 #           python test_report_generator.py
 
 #       # ==========================================================
-#       # STEP 21
-#       # Verify AI Reports
+#       # STEP 29 - Verify AI Reports
 #       # ==========================================================
 
 #       - name: Verify AI Reports
@@ -488,8 +501,7 @@
 #           echo "✅ AI reports generated successfully."
 
 #       # ==========================================================
-#       # STEP 22
-#       # Verify Scenario Reports
+#       # STEP 30 - Verify Scenario Reports
 #       # ==========================================================
 
 #       - name: Verify Scenario Reports
@@ -501,8 +513,7 @@
 #           echo "✅ Scenario reports verified."
 
 #       # ==========================================================
-#       # STEP 23
-#       # Run Grafana Tests
+#       # STEP 31 - Run Grafana Tests
 #       # ==========================================================
 
 #       - name: Run Grafana Tests
@@ -510,8 +521,7 @@
 #           pytest tests/test_grafana.py -v
 
 #       # ==========================================================
-#       # STEP 24
-#       # Run Week 12 Dashboard & Integration Tests
+#       # STEP 32 - Run Week 12 Dashboard & Integration Tests
 #       # ==========================================================
 
 #       - name: Run Week 12 Dashboard and Integration Tests
@@ -521,14 +531,7 @@
 #           pytest tests/test_week12_dashboard_and_integration.py -v
 
 #       # ==========================================================
-#       # STEP 25
-#       # Validate DB Service
-#       #
-#       # Your current project uses:
-#       # src/services/database_service.py
-#       #
-#       # Therefore we validate DatabaseService rather than the
-#       # older src/database/db_manager.py structure.
+#       # STEP 33 - Validate Database Service
 #       # ==========================================================
 
 #       - name: Validate Database Service
@@ -539,16 +542,7 @@
 #           "
 
 #       # ==========================================================
-#       # STEP 26
-#       # Validate Grafana Dashboard JSON
-#       #
-#       # IMPORTANT:
-#       # Current dashboard filename uses a hyphen:
-#       # netsentinel-dashboard.json
-#       #
-#       # It is Grafana's newer dashboard structure using:
-#       # spec.elements
-#       # rather than the old dashboard.panels structure.
+#       # STEP 34 - Validate Grafana Dashboard JSON
 #       # ==========================================================
 
 #       - name: Validate Grafana Dashboard JSON
@@ -607,12 +601,20 @@
 #           assert connectivity_found, \
 #               'Connectivity panel not found'
 
+#           azure_found = any(
+#               'Azure Network Watcher' in title
+#               for title in titles
+#           )
+
+#           assert azure_found, \
+#               'Azure Network Watcher panel not found'
+
 #           print('✅ Connectivity panel verified')
+#           print('✅ Azure Network Watcher panel verified')
 #           "
 
 #       # ==========================================================
-#       # STEP 27
-#       # Validate Prometheus Metrics
+#       # STEP 35 - Validate Prometheus Metrics
 #       # ==========================================================
 
 #       - name: Validate Prometheus Metrics
@@ -655,8 +657,97 @@
 #           done
 
 #       # ==========================================================
-#       # STEP 28
-#       # Run Complete Test Suite
+#       # STEP 36 - Week 13 AI Benchmark
+#       #
+#       # Validates the implemented Groq AI benchmark.
+#       # ==========================================================
+
+#       - name: Run Week 13 Groq Benchmark
+#         env:
+#           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+#         run: |
+#           echo "=============================================="
+#           echo "Week 13 - Groq AI Benchmark"
+#           echo "=============================================="
+
+#           python -m py_compile src/ai/benchmark.py
+
+#           python src/ai/benchmark.py
+
+#           test -f monitoring/reports/benchmark_results.json
+
+#           echo "✅ Groq benchmark completed."
+#           echo "✅ Benchmark results generated."
+
+#       # ==========================================================
+#       # STEP 37 - Week 13 Network Watcher Validation
+#       # ==========================================================
+
+#       - name: Validate Week 13 Network Watcher
+#         run: |
+#           echo "=============================================="
+#           echo "Week 13 - Azure Network Watcher Validation"
+#           echo "=============================================="
+
+#           test -f src/network/azure_network_watcher.py
+
+#           python -c "
+#           from src.network.azure_network_watcher import AzureNetworkWatcher
+
+#           watcher = AzureNetworkWatcher()
+
+#           print('✅ Azure Network Watcher module initialized')
+#           "
+
+#           echo "✅ Azure Network Watcher module verified."
+
+#       # ==========================================================
+#       # STEP 38 - Run Week 13 Tests
+#       # ==========================================================
+
+#       - name: Run Week 13 Tests
+#         env:
+#           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+#         run: |
+#           mkdir -p evidence/week13
+
+#           pytest tests/test_week13.py \
+#             -v \
+#             --json-report \
+#             --json-report-file=evidence/week13/week13_test_results.json
+
+#       # ==========================================================
+#       # STEP 39 - Verify Week 13 Test Results
+#       # ==========================================================
+
+#       - name: Verify Week 13 Test Results
+#         run: |
+#           test -f evidence/week13/week13_test_results.json
+
+#           python -c "
+#           import json
+
+#           path = 'evidence/week13/week13_test_results.json'
+
+#           with open(path, encoding='utf-8') as file:
+#               data = json.load(file)
+
+#           summary = data.get('summary', {})
+
+#           passed = summary.get('passed', 0)
+#           total = summary.get('total', 0)
+
+#           print(f'Week 13 tests passed: {passed}/{total}')
+
+#           assert total > 0, 'No Week 13 tests were collected'
+#           assert passed == total, \
+#               'Not all Week 13 tests passed'
+
+#           print('✅ Week 13 test results verified.')
+#           "
+
+#       # ==========================================================
+#       # STEP 40 - Run Complete Test Suite
 #       # ==========================================================
 
 #       - name: Run Complete Test Suite
@@ -666,23 +757,63 @@
 #           pytest tests/ -v
 
 #       # ==========================================================
-#       # STEP 29
-#       # Generate Coverage Report
+#       # STEP 41 - Generate Coverage Report
+#       #
+#       # Coverage is generated for the complete source tree.
+#       # The proposal target is >=80%, which is a Week 15 target.
 #       # ==========================================================
 
 #       - name: Generate Coverage Report
 #         env:
 #           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
 #         run: |
+#           mkdir -p evidence/week13
+
 #           pytest tests/ \
 #             --cov=src \
 #             --cov-report=term-missing \
 #             --cov-report=xml \
-#             --cov-report=html
+#             --cov-report=html \
+#             > evidence/week13/week13_coverage.txt
+
+#           cp htmlcov/index.html \
+#             evidence/week13/week13_coverage.html
+
+#           echo "✅ Coverage report generated."
 
 #       # ==========================================================
-#       # STEP 30
-#       # Upload Coverage Report
+#       # STEP 42 - Display Coverage Summary
+#       # ==========================================================
+
+#       - name: Display Coverage Summary
+#         if: always()
+#         run: |
+#           echo "=============================================="
+#           echo "Coverage Summary"
+#           echo "=============================================="
+
+#           if [ -f evidence/week13/week13_coverage.txt ]; then
+#             tail -25 evidence/week13/week13_coverage.txt
+#           else
+#             echo "Coverage report not found."
+#           fi
+
+#       # ==========================================================
+#       # STEP 43 - Verify Week 13 Evidence
+#       # ==========================================================
+
+#       - name: Verify Week 13 Evidence
+#         run: |
+#           test -f evidence/week13/week13_test_results.json
+#           test -f evidence/week13/week13_coverage.txt
+#           test -f evidence/week13/week13_coverage.html
+#           test -f monitoring/reports/benchmark_results.json
+#           test -f grafana/dashboards/netsentinel-dashboard.json
+
+#           echo "✅ Week 13 evidence files verified."
+
+#       # ==========================================================
+#       # STEP 44 - Upload Coverage Report
 #       # ==========================================================
 
 #       - name: Upload Coverage Report
@@ -693,10 +824,11 @@
 #           path: |
 #             coverage.xml
 #             htmlcov/
+#             evidence/week13/week13_coverage.txt
+#             evidence/week13/week13_coverage.html
 
 #       # ==========================================================
-#       # STEP 31
-#       # Upload Week 12 Evidence
+#       # STEP 45 - Upload Week 12 Evidence
 #       # ==========================================================
 
 #       - name: Upload Week 12 Evidence
@@ -713,8 +845,21 @@
 #             monitoring/reports/networkwatcher/
 
 #       # ==========================================================
-#       # STEP 32
-#       # Show Logs When Something Fails
+#       # STEP 46 - Upload Week 13 Evidence
+#       # ==========================================================
+
+#       - name: Upload Week 13 Evidence
+#         if: always()
+#         uses: actions/upload-artifact@v4
+#         with:
+#           name: netsentinel-week13-evidence
+#           path: |
+#             evidence/week13/
+#             monitoring/reports/benchmark_results.json
+#             grafana/dashboards/netsentinel-dashboard.json
+
+#       # ==========================================================
+#       # STEP 47 - Show Logs When Something Fails
 #       # ==========================================================
 
 #       - name: Show FastAPI Logs on Failure
@@ -750,8 +895,7 @@
 #           docker compose logs --no-color || true
 
 #       # ==========================================================
-#       # STEP 33
-#       # Cleanup
+#       # STEP 48 - Cleanup
 #       # ==========================================================
 
 #       - name: Stop NetSentinel Services
@@ -760,7 +904,7 @@
 #           docker compose down
 
 #       # ==========================================================
-#       # Final Validation
+#       # FINAL VALIDATION
 #       # ==========================================================
 
 #       - name: NetSentinel Validation Complete
@@ -769,20 +913,30 @@
 #           echo "=================================================="
 #           echo "       NetSentinel CI Pipeline Completed"
 #           echo "=================================================="
+
 #           echo "Week 5 Validation        : PASSED"
 #           echo "Week 6 Validation        : PASSED"
 #           echo "Week 7 Validation        : PASSED"
 #           echo "Week 8 Validation        : PASSED"
 #           echo "Week 11 Validation       : PASSED"
 #           echo "Week 12 Validation       : PASSED"
+#           echo "Week 13 Validation       : PASSED"
+
 #           echo "PostgreSQL               : VERIFIED"
 #           echo "Prometheus               : VERIFIED"
 #           echo "30-Day Retention         : VERIFIED"
 #           echo "Grafana                  : VERIFIED"
 #           echo "Dashboard                : VERIFIED"
+#           echo "Connectivity Panel      : VERIFIED"
+#           echo "Azure Network Watcher   : VERIFIED"
+
 #           echo "Integration Tests        : PASSED"
 #           echo "AI / Groq                : VERIFIED"
-#           echo "Coverage Report         : GENERATED"
+#           echo "Groq Benchmark           : PASSED"
+#           echo "Week 13 Tests            : PASSED"
+#           echo "Week 13 Evidence         : VERIFIED"
+#           echo "Coverage Report          : GENERATED"
+
 #           echo "=================================================="
 #           echo "All NetSentinel validations completed successfully!"
 #           echo "=================================================="
@@ -857,6 +1011,7 @@ jobs:
           test -f tests/test_grafana.py
           test -f tests/test_week12_dashboard_and_integration.py
           test -f tests/test_week13.py
+          test -f tests/test_week14.py
           test -f test_groq.py
 
           echo "✅ All test files verified."
@@ -903,7 +1058,19 @@ jobs:
           echo "✅ Azure Network Watcher module verified."
 
       # ==========================================================
-      # STEP 8 - Docker Compose Configuration
+      # STEP 8 - Verify Week 14 AI Files
+      # ==========================================================
+
+      - name: Verify Week 14 AI Files
+        run: |
+          test -f src/ai/prompt_templates.py
+          test -f src/ai/scenario_runner_v2.py
+          test -f src/ai/quality_validator.py
+
+          echo "✅ Week 14 AI files verified."
+
+      # ==========================================================
+      # STEP 9 - Docker Compose Configuration
       # ==========================================================
 
       - name: Validate Docker Compose Configuration
@@ -913,7 +1080,7 @@ jobs:
           echo "✅ Docker Compose configuration is valid."
 
       # ==========================================================
-      # STEP 9 - Start Docker Services
+      # STEP 10 - Start Docker Services
       # ==========================================================
 
       - name: Start Docker Services
@@ -929,7 +1096,7 @@ jobs:
           docker compose ps
 
       # ==========================================================
-      # STEP 10 - Wait for PostgreSQL
+      # STEP 11 - Wait for PostgreSQL
       # ==========================================================
 
       - name: Wait for PostgreSQL
@@ -961,7 +1128,7 @@ jobs:
           fi
 
       # ==========================================================
-      # STEP 11 - Verify PostgreSQL Tables
+      # STEP 12 - Verify PostgreSQL Tables
       # ==========================================================
 
       - name: Verify PostgreSQL Tables
@@ -976,7 +1143,7 @@ jobs:
           echo "✅ PostgreSQL database is accessible."
 
       # ==========================================================
-      # STEP 12 - Validate Docker Volumes
+      # STEP 13 - Validate Docker Volumes
       # ==========================================================
 
       - name: Validate Docker Volumes
@@ -1003,7 +1170,7 @@ jobs:
           echo "✅ prometheus_data volume"
 
       # ==========================================================
-      # STEP 13 - Validate Prometheus 30-Day Retention
+      # STEP 14 - Validate Prometheus 30-Day Retention
       # ==========================================================
 
       - name: Validate Prometheus Retention
@@ -1021,7 +1188,7 @@ jobs:
           echo "✅ Prometheus 30-day retention configured."
 
       # ==========================================================
-      # STEP 14 - Wait for Prometheus
+      # STEP 15 - Wait for Prometheus
       # ==========================================================
 
       - name: Wait for Prometheus
@@ -1053,7 +1220,7 @@ jobs:
           fi
 
       # ==========================================================
-      # STEP 15 - Wait for Grafana
+      # STEP 16 - Wait for Grafana
       # ==========================================================
 
       - name: Wait for Grafana
@@ -1085,7 +1252,7 @@ jobs:
           fi
 
       # ==========================================================
-      # STEP 16 - Start FastAPI Server
+      # STEP 17 - Start FastAPI Server
       # ==========================================================
 
       - name: Start FastAPI Server
@@ -1156,7 +1323,7 @@ jobs:
           echo "=================================="
 
       # ==========================================================
-      # STEP 17 - FastAPI Health Validation
+      # STEP 18 - FastAPI Health Validation
       # ==========================================================
 
       - name: Verify Health Endpoint
@@ -1167,7 +1334,7 @@ jobs:
           echo "✅ Health endpoint verified."
 
       # ==========================================================
-      # STEP 18 - FastAPI Metrics Validation
+      # STEP 19 - FastAPI Metrics Validation
       # ==========================================================
 
       - name: Verify Metrics Endpoint
@@ -1178,7 +1345,7 @@ jobs:
           echo "✅ Metrics endpoint verified."
 
       # ==========================================================
-      # STEP 19 - Run Unit Tests
+      # STEP 20 - Run Unit Tests
       # ==========================================================
 
       - name: Run Unit Tests
@@ -1186,7 +1353,7 @@ jobs:
           pytest tests/test_unit.py -v
 
       # ==========================================================
-      # STEP 20 - Run Connectivity Tests
+      # STEP 21 - Run Connectivity Tests
       # ==========================================================
 
       - name: Run Connectivity Tests
@@ -1194,7 +1361,7 @@ jobs:
           pytest tests/connectivity_test.py -v
 
       # ==========================================================
-      # STEP 21 - Run Integration Tests
+      # STEP 22 - Run Integration Tests
       # ==========================================================
 
       - name: Run Integration Tests
@@ -1204,7 +1371,7 @@ jobs:
           pytest tests/test_integration.py -v
 
       # ==========================================================
-      # STEP 22 - Run Analytics Tests
+      # STEP 23 - Run Analytics Tests
       # ==========================================================
 
       - name: Run Analytics Tests
@@ -1212,7 +1379,7 @@ jobs:
           pytest tests/test_analysis.py -v
 
       # ==========================================================
-      # STEP 23 - Generate Analytics Charts
+      # STEP 24 - Generate Analytics Charts
       # ==========================================================
 
       - name: Generate Analytics Charts
@@ -1220,7 +1387,7 @@ jobs:
           python test_chart.py
 
       # ==========================================================
-      # STEP 24 - Verify Generated Charts
+      # STEP 25 - Verify Generated Charts
       # ==========================================================
 
       - name: Verify Generated Charts
@@ -1234,7 +1401,7 @@ jobs:
           echo "✅ Analytics charts generated successfully."
 
       # ==========================================================
-      # STEP 25 - Verify Groq API Secret
+      # STEP 26 - Verify Groq API Secret
       # ==========================================================
 
       - name: Verify Groq API Secret
@@ -1249,7 +1416,7 @@ jobs:
           echo "✅ GROQ_API_KEY is configured."
 
       # ==========================================================
-      # STEP 26 - Run AI Tests
+      # STEP 27 - Run AI Tests
       # ==========================================================
 
       - name: Run AI Tests
@@ -1259,7 +1426,7 @@ jobs:
           pytest tests/test_ai.py -v
 
       # ==========================================================
-      # STEP 27 - Run Scenario Tests
+      # STEP 28 - Run Scenario Tests
       # ==========================================================
 
       - name: Run Scenario Validation
@@ -1269,7 +1436,7 @@ jobs:
           pytest tests/test_scenario_runner.py -v
 
       # ==========================================================
-      # STEP 28 - Generate AI Reports
+      # STEP 29 - Generate AI Reports
       # ==========================================================
 
       - name: Generate AI Reports
@@ -1279,7 +1446,7 @@ jobs:
           python test_report_generator.py
 
       # ==========================================================
-      # STEP 29 - Verify AI Reports
+      # STEP 30 - Verify AI Reports
       # ==========================================================
 
       - name: Verify AI Reports
@@ -1290,7 +1457,7 @@ jobs:
           echo "✅ AI reports generated successfully."
 
       # ==========================================================
-      # STEP 30 - Verify Scenario Reports
+      # STEP 31 - Verify Scenario Reports
       # ==========================================================
 
       - name: Verify Scenario Reports
@@ -1302,7 +1469,7 @@ jobs:
           echo "✅ Scenario reports verified."
 
       # ==========================================================
-      # STEP 31 - Run Grafana Tests
+      # STEP 32 - Run Grafana Tests
       # ==========================================================
 
       - name: Run Grafana Tests
@@ -1310,7 +1477,7 @@ jobs:
           pytest tests/test_grafana.py -v
 
       # ==========================================================
-      # STEP 32 - Run Week 12 Dashboard & Integration Tests
+      # STEP 33 - Run Week 12 Dashboard & Integration Tests
       # ==========================================================
 
       - name: Run Week 12 Dashboard and Integration Tests
@@ -1320,7 +1487,7 @@ jobs:
           pytest tests/test_week12_dashboard_and_integration.py -v
 
       # ==========================================================
-      # STEP 33 - Validate Database Service
+      # STEP 34 - Validate Database Service
       # ==========================================================
 
       - name: Validate Database Service
@@ -1331,7 +1498,7 @@ jobs:
           "
 
       # ==========================================================
-      # STEP 34 - Validate Grafana Dashboard JSON
+      # STEP 35 - Validate Grafana Dashboard JSON
       # ==========================================================
 
       - name: Validate Grafana Dashboard JSON
@@ -1403,7 +1570,7 @@ jobs:
           "
 
       # ==========================================================
-      # STEP 35 - Validate Prometheus Metrics
+      # STEP 36 - Validate Prometheus Metrics
       # ==========================================================
 
       - name: Validate Prometheus Metrics
@@ -1446,9 +1613,7 @@ jobs:
           done
 
       # ==========================================================
-      # STEP 36 - Week 13 AI Benchmark
-      #
-      # Validates the implemented Groq AI benchmark.
+      # STEP 37 - Week 13 AI Benchmark
       # ==========================================================
 
       - name: Run Week 13 Groq Benchmark
@@ -1469,7 +1634,7 @@ jobs:
           echo "✅ Benchmark results generated."
 
       # ==========================================================
-      # STEP 37 - Week 13 Network Watcher Validation
+      # STEP 38 - Week 13 Network Watcher Validation
       # ==========================================================
 
       - name: Validate Week 13 Network Watcher
@@ -1491,7 +1656,7 @@ jobs:
           echo "✅ Azure Network Watcher module verified."
 
       # ==========================================================
-      # STEP 38 - Run Week 13 Tests
+      # STEP 39 - Run Week 13 Tests
       # ==========================================================
 
       - name: Run Week 13 Tests
@@ -1506,7 +1671,7 @@ jobs:
             --json-report-file=evidence/week13/week13_test_results.json
 
       # ==========================================================
-      # STEP 39 - Verify Week 13 Test Results
+      # STEP 40 - Verify Week 13 Test Results
       # ==========================================================
 
       - name: Verify Week 13 Test Results
@@ -1536,7 +1701,320 @@ jobs:
           "
 
       # ==========================================================
-      # STEP 40 - Run Complete Test Suite
+      # STEP 41 - Verify Week 13 Evidence
+      # ==========================================================
+
+      - name: Verify Week 13 Evidence
+        run: |
+          test -f evidence/week13/week13_test_results.json
+          test -f monitoring/reports/benchmark_results.json
+          test -f grafana/dashboards/netsentinel-dashboard.json
+
+          echo "✅ Week 13 evidence files verified."
+
+      # ==========================================================
+      # WEEK 14
+      # ==========================================================
+
+      # ==========================================================
+      # STEP 42 - Verify Week 14 Scenario Files
+      # ==========================================================
+
+      - name: Verify Week 14 Scenario Files
+        run: |
+          echo "=============================================="
+          echo "Week 14 - Scenario Files"
+          echo "=============================================="
+
+          test -f monitoring/scenarios/healthy_network.json
+          test -f monitoring/scenarios/high_latency.json
+          test -f monitoring/scenarios/throughput_degradation.json
+          test -f monitoring/scenarios/high_error_rate.json
+          test -f monitoring/scenarios/comparative_analysis.json
+
+          echo "✅ All 5 Week 14 scenario files verified."
+
+      # ==========================================================
+      # STEP 43 - Verify Week 14 AI Implementation
+      # ==========================================================
+
+      - name: Verify Week 14 AI Implementation
+        run: |
+          echo "=============================================="
+          echo "Week 14 - AI Implementation"
+          echo "=============================================="
+
+          test -f src/ai/prompt_templates.py
+          test -f src/ai/scenario_runner_v2.py
+          test -f src/ai/quality_validator.py
+
+          python -m py_compile \
+            src/ai/prompt_templates.py \
+            src/ai/scenario_runner_v2.py \
+            src/ai/quality_validator.py
+
+          echo "✅ Week 14 AI implementation verified."
+
+      # ==========================================================
+      # STEP 44 - Verify Week 14 PostgreSQL Tables
+      # ==========================================================
+
+      - name: Validate Week 14 PostgreSQL Tables
+        run: |
+          echo "=============================================="
+          echo "Week 14 - PostgreSQL Validation"
+          echo "=============================================="
+
+          docker exec netsentinel-db \
+            psql -U admin -d netsentinel \
+            -c "\dt scenario_ai_results"
+
+          docker exec netsentinel-db \
+            psql -U admin -d netsentinel \
+            -c "\dt ai_quality_results"
+
+          docker exec netsentinel-db \
+            psql -U admin -d netsentinel \
+            -c "\d scenario_ai_results"
+
+          docker exec netsentinel-db \
+            psql -U admin -d netsentinel \
+            -c "\d ai_quality_results"
+
+          echo "✅ Week 14 PostgreSQL tables verified."
+
+      # ==========================================================
+      # STEP 45 - Verify Week 14 AI Reports
+      # ==========================================================
+
+      - name: Verify Week 14 AI Reports
+        run: |
+          echo "=============================================="
+          echo "Week 14 - AI Scenario Reports"
+          echo "=============================================="
+
+          test -f monitoring/reports/scenario_reports_v2/comparative_analysis_report.txt
+          test -f monitoring/reports/scenario_reports_v2/healthy_network_report.txt
+          test -f monitoring/reports/scenario_reports_v2/high_error_rate_report.txt
+          test -f monitoring/reports/scenario_reports_v2/high_latency_report.txt
+          test -f monitoring/reports/scenario_reports_v2/throughput_degradation_report.txt
+
+          for report in monitoring/reports/scenario_reports_v2/*.txt
+          do
+            test -s "$report"
+            echo "✅ Verified: $report"
+          done
+
+          echo "✅ All 5 Week 14 AI reports verified."
+
+      # ==========================================================
+      # STEP 46 - Verify Week 14 AI Quality Report
+      # ==========================================================
+
+      - name: Verify Week 14 AI Quality Report
+        run: |
+          echo "=============================================="
+          echo "Week 14 - AI Quality Validation"
+          echo "=============================================="
+
+          test -f monitoring/reports/ai_quality_report.json
+
+          python -c "
+          import json
+
+          path = 'monitoring/reports/ai_quality_report.json'
+
+          with open(path, encoding='utf-8') as file:
+              data = json.load(file)
+
+          reports = data.get('reports', [])
+
+          total = data.get('total_reports', len(reports))
+          passed = data.get('passed', 0)
+          review = data.get('review', 0)
+          failed = data.get('failed', 0)
+          average = data.get('average_quality_score', 0)
+
+          print(f'Total reports: {total}')
+          print(f'Passed: {passed}')
+          print(f'Review: {review}')
+          print(f'Failed: {failed}')
+          print(f'Average quality score: {average}')
+
+          assert total == 5, \
+              'Week 14 must contain 5 AI scenario reports'
+
+          assert passed == 5, \
+              'All Week 14 AI reports must pass validation'
+
+          assert review == 0, \
+              'Week 14 AI reports contain review results'
+
+          assert failed == 0, \
+              'Week 14 AI reports contain failed results'
+
+          assert float(average) >= 80, \
+              'Average AI quality score must be at least 80'
+
+          print('✅ Week 14 AI quality report verified.')
+          "
+
+      # ==========================================================
+      # STEP 47 - Verify Week 14 FastAPI Endpoints
+      # ==========================================================
+
+      - name: Validate Week 14 FastAPI Endpoints
+        run: |
+          echo "=============================================="
+          echo "Week 14 - FastAPI Endpoint Validation"
+          echo "=============================================="
+
+          echo "Checking scenario list endpoint..."
+
+          curl --silent --fail \
+            http://localhost:8000/ai/scenarios/list \
+            > /tmp/week14_scenarios.json
+
+          python -c "
+          import json
+
+          with open('/tmp/week14_scenarios.json', encoding='utf-8') as file:
+              data = json.load(file)
+
+          assert data.get('status') == 'success'
+          assert data.get('total_scenarios') == 5
+
+          print('✅ /ai/scenarios/list verified.')
+          "
+
+          echo "Checking AI quality report endpoint..."
+
+          curl --silent --fail \
+            http://localhost:8000/ai/quality-report \
+            > /tmp/week14_quality.json
+
+          python -c "
+          import json
+
+          with open('/tmp/week14_quality.json', encoding='utf-8') as file:
+              data = json.load(file)
+
+          assert data.get('status') == 'success'
+
+          quality = data.get('quality_report', {})
+
+          assert quality.get('total_reports') == 5
+          assert quality.get('passed') == 5
+          assert quality.get('failed') == 0
+
+          print('✅ /ai/quality-report verified.')
+          "
+
+          echo "✅ Week 14 FastAPI endpoints verified."
+
+      # ==========================================================
+      # STEP 48 - Verify Week 14 Grafana AI Quality Panel
+      # ==========================================================
+
+      - name: Validate Week 14 Grafana AI Quality Panel
+        run: |
+          echo "=============================================="
+          echo "Week 14 - Grafana AI Quality Panel"
+          echo "=============================================="
+
+          python -c "
+          import json
+
+          path = 'grafana/dashboards/netsentinel-dashboard.json'
+
+          with open(path, encoding='utf-8') as file:
+              data = json.load(file)
+
+          spec = data.get('spec', {})
+          elements = spec.get('elements', {})
+
+          found = False
+
+          for element in elements.values():
+              if not isinstance(element, dict):
+                  continue
+
+              if element.get('kind') != 'Panel':
+                  continue
+
+              panel_spec = element.get('spec', {})
+              title = panel_spec.get('title', '')
+
+              if 'AI Scenario Quality' in title:
+                  found = True
+
+                  print(f'Found panel: {title}')
+
+                  datasource = panel_spec.get('data', {}).get('spec', {}).get(
+                      'queries', []
+                  )
+
+                  print('AI Scenario Quality panel found.')
+
+          assert found, \
+              'AI Scenario Quality panel not found'
+
+          print('✅ Week 14 Grafana AI Quality panel verified.')
+          "
+
+      # ==========================================================
+      # STEP 49 - Run Week 14 Tests
+      # ==========================================================
+
+      - name: Run Week 14 Tests
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: |
+          echo "=============================================="
+          echo "Week 14 - Test Suite"
+          echo "=============================================="
+
+          mkdir -p evidence/week14
+
+          pytest tests/test_week14.py \
+            -v \
+            --json-report \
+            --json-report-file=evidence/week14/week14_test_results.json
+
+      # ==========================================================
+      # STEP 50 - Verify Week 14 Test Results
+      # ==========================================================
+
+      - name: Verify Week 14 Test Results
+        run: |
+          test -f evidence/week14/week14_test_results.json
+
+          python -c "
+          import json
+
+          path = 'evidence/week14/week14_test_results.json'
+
+          with open(path, encoding='utf-8') as file:
+              data = json.load(file)
+
+          summary = data.get('summary', {})
+
+          passed = summary.get('passed', 0)
+          total = summary.get('total', 0)
+
+          print(f'Week 14 tests passed: {passed}/{total}')
+
+          assert total == 16, \
+              'Expected 16 Week 14 tests'
+
+          assert passed == total, \
+              'Not all Week 14 tests passed'
+
+          print('✅ Week 14 test results verified.')
+          "
+
+      # ==========================================================
+      # STEP 51 - Run Complete Regression Test Suite
       # ==========================================================
 
       - name: Run Complete Test Suite
@@ -1546,32 +2024,29 @@ jobs:
           pytest tests/ -v
 
       # ==========================================================
-      # STEP 41 - Generate Coverage Report
-      #
-      # Coverage is generated for the complete source tree.
-      # The proposal target is >=80%, which is a Week 15 target.
+      # STEP 52 - Generate Coverage Report
       # ==========================================================
 
       - name: Generate Coverage Report
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         run: |
-          mkdir -p evidence/week13
+          mkdir -p evidence/week14
 
           pytest tests/ \
             --cov=src \
             --cov-report=term-missing \
             --cov-report=xml \
             --cov-report=html \
-            > evidence/week13/week13_coverage.txt
+            > evidence/week14/week14_coverage.txt
 
           cp htmlcov/index.html \
-            evidence/week13/week13_coverage.html
+            evidence/week14/week14_coverage.html
 
           echo "✅ Coverage report generated."
 
       # ==========================================================
-      # STEP 42 - Display Coverage Summary
+      # STEP 53 - Display Coverage Summary
       # ==========================================================
 
       - name: Display Coverage Summary
@@ -1581,28 +2056,36 @@ jobs:
           echo "Coverage Summary"
           echo "=============================================="
 
-          if [ -f evidence/week13/week13_coverage.txt ]; then
-            tail -25 evidence/week13/week13_coverage.txt
+          if [ -f evidence/week14/week14_coverage.txt ]; then
+            tail -25 evidence/week14/week14_coverage.txt
           else
             echo "Coverage report not found."
           fi
 
       # ==========================================================
-      # STEP 43 - Verify Week 13 Evidence
+      # STEP 54 - Verify Week 14 Evidence
       # ==========================================================
 
-      - name: Verify Week 13 Evidence
+      - name: Verify Week 14 Evidence
         run: |
-          test -f evidence/week13/week13_test_results.json
-          test -f evidence/week13/week13_coverage.txt
-          test -f evidence/week13/week13_coverage.html
-          test -f monitoring/reports/benchmark_results.json
+          test -f evidence/week14/week14_test_results.json
+          test -f evidence/week14/week14_coverage.txt
+          test -f evidence/week14/week14_coverage.html
+
+          test -f monitoring/reports/ai_quality_report.json
+
+          test -f monitoring/reports/scenario_reports_v2/comparative_analysis_report.txt
+          test -f monitoring/reports/scenario_reports_v2/healthy_network_report.txt
+          test -f monitoring/reports/scenario_reports_v2/high_error_rate_report.txt
+          test -f monitoring/reports/scenario_reports_v2/high_latency_report.txt
+          test -f monitoring/reports/scenario_reports_v2/throughput_degradation_report.txt
+
           test -f grafana/dashboards/netsentinel-dashboard.json
 
-          echo "✅ Week 13 evidence files verified."
+          echo "✅ Week 14 evidence verified."
 
       # ==========================================================
-      # STEP 44 - Upload Coverage Report
+      # STEP 55 - Upload Coverage Report
       # ==========================================================
 
       - name: Upload Coverage Report
@@ -1613,11 +2096,11 @@ jobs:
           path: |
             coverage.xml
             htmlcov/
-            evidence/week13/week13_coverage.txt
-            evidence/week13/week13_coverage.html
+            evidence/week14/week14_coverage.txt
+            evidence/week14/week14_coverage.html
 
       # ==========================================================
-      # STEP 45 - Upload Week 12 Evidence
+      # STEP 56 - Upload Week 12 Evidence
       # ==========================================================
 
       - name: Upload Week 12 Evidence
@@ -1634,7 +2117,7 @@ jobs:
             monitoring/reports/networkwatcher/
 
       # ==========================================================
-      # STEP 46 - Upload Week 13 Evidence
+      # STEP 57 - Upload Week 13 Evidence
       # ==========================================================
 
       - name: Upload Week 13 Evidence
@@ -1648,7 +2131,22 @@ jobs:
             grafana/dashboards/netsentinel-dashboard.json
 
       # ==========================================================
-      # STEP 47 - Show Logs When Something Fails
+      # STEP 58 - Upload Week 14 Evidence
+      # ==========================================================
+
+      - name: Upload Week 14 Evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: netsentinel-week14-evidence
+          path: |
+            evidence/week14/
+            monitoring/reports/ai_quality_report.json
+            monitoring/reports/scenario_reports_v2/
+            grafana/dashboards/netsentinel-dashboard.json
+
+      # ==========================================================
+      # STEP 59 - Show Logs When Something Fails
       # ==========================================================
 
       - name: Show FastAPI Logs on Failure
@@ -1684,7 +2182,7 @@ jobs:
           docker compose logs --no-color || true
 
       # ==========================================================
-      # STEP 48 - Cleanup
+      # STEP 60 - Cleanup
       # ==========================================================
 
       - name: Stop NetSentinel Services
@@ -1710,6 +2208,7 @@ jobs:
           echo "Week 11 Validation       : PASSED"
           echo "Week 12 Validation       : PASSED"
           echo "Week 13 Validation       : PASSED"
+          echo "Week 14 Validation       : PASSED"
 
           echo "PostgreSQL               : VERIFIED"
           echo "Prometheus               : VERIFIED"
@@ -1719,12 +2218,23 @@ jobs:
           echo "Connectivity Panel      : VERIFIED"
           echo "Azure Network Watcher   : VERIFIED"
 
-          echo "Integration Tests        : PASSED"
           echo "AI / Groq                : VERIFIED"
           echo "Groq Benchmark           : PASSED"
+
           echo "Week 13 Tests            : PASSED"
           echo "Week 13 Evidence         : VERIFIED"
-          echo "Coverage Report          : GENERATED"
+
+          echo "Week 14 Scenarios        : VERIFIED"
+          echo "Week 14 AI Reports       : VERIFIED"
+          echo "AI Quality Validation    : VERIFIED"
+          echo "Week 14 PostgreSQL       : VERIFIED"
+          echo "Week 14 FastAPI          : VERIFIED"
+          echo "Week 14 Grafana          : VERIFIED"
+          echo "Week 14 Tests            : PASSED"
+          echo "Week 14 Evidence         : VERIFIED"
+
+          echo "Complete Regression     : PASSED"
+          echo "Coverage Report         : GENERATED"
 
           echo "=================================================="
           echo "All NetSentinel validations completed successfully!"

@@ -72,3 +72,45 @@ CREATE INDEX IF NOT EXISTS idx_ai_reports_created_at
 
 CREATE INDEX IF NOT EXISTS idx_test_runs_created_at
     ON test_runs(created_at);
+
+-- ==========================================
+-- Week 14 AI Scenario Quality
+-- ==========================================
+
+-- AI scenario execution results
+CREATE TABLE IF NOT EXISTS scenario_ai_results (
+    id SERIAL PRIMARY KEY,
+    scenario_name VARCHAR(100) NOT NULL,
+    average_latency_ms DOUBLE PRECISION,
+    maximum_latency_ms DOUBLE PRECISION,
+    minimum_latency_ms DOUBLE PRECISION,
+    p95_latency_ms DOUBLE PRECISION,
+    total_requests INTEGER DEFAULT 0,
+    failed_requests INTEGER DEFAULT 0,
+    error_rate_percent DOUBLE PRECISION DEFAULT 0,
+    postman_response_time_ms DOUBLE PRECISION,
+    throughput_mbps DOUBLE PRECISION,
+    baseline_throughput_mbps DOUBLE PRECISION,
+    ai_report TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- AI quality validation results
+CREATE TABLE IF NOT EXISTS ai_quality_results (
+    id SERIAL PRIMARY KEY,
+    scenario_name VARCHAR(100) NOT NULL,
+    report_file VARCHAR(255),
+    status VARCHAR(20) NOT NULL,
+    quality_score DOUBLE PRECISION NOT NULL,
+    validation_checks JSONB,
+    issues JSONB,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Indexes for Week 14 AI scenario tables
+CREATE INDEX IF NOT EXISTS idx_scenario_ai_results_created_at
+    ON scenario_ai_results(created_at);
+
+CREATE INDEX IF NOT EXISTS idx_ai_quality_results_created_at
+    ON ai_quality_results(created_at);
+

@@ -1,0 +1,71 @@
+**Scenario Summary – Latency Spike**
+
+| Metric | Value |
+|--------|-------|
+| Avg Latency | 320.8 ms |
+| Max Latency | 590.2 ms |
+| Min Latency | 180.5 ms |
+| P95 Latency | 650.9 ms |
+| Total Requests | 5,000 |
+| Failed Requests | 35 |
+| Error Rate | 0.7 % |
+| Postman Response Time | 720.4 ms |
+
+---
+
+### 1. Overall Health  
+- **Error Rate** (0.7 %) is slightly above typical thresholds (<0.5 %) but still within an acceptable range for many services.  
+- **Failed Requests** (35/5,000 ≈ 0.7 %) correlate with the error rate.  
+- **Latency**: Average 320.8 ms is higher than the minimum (180.5 ms) and the P95 (650.9 ms) indicates a significant tail.  
+- **Postman Response** (720.4 ms) matches the high tail, suggesting the issue is not isolated to a single client.
+
+**Conclusion**: The network/service is **degraded** – latency is elevated and the tail latency is pronounced, though error rates remain modest.
+
+---
+
+### 2. Latency Impact  
+- **User Experience**: 320 ms average may be acceptable for some applications but can degrade perceived performance, especially for interactive workloads.  
+- **P95 Latency** (650.9 ms) means 5 % of requests exceed 650 ms, which can trigger SLA violations or timeout failures in downstream systems.  
+- **Postman** hitting 720 ms confirms that the tail is observable from external clients.
+
+---
+
+### 3. Possible Root Causes (not measured)  
+| Category | Potential Cause |
+|----------|-----------------|
+| **Network** | Congestion on a critical link, increased packet loss, or jitter. |
+| **Application** | Increased CPU/memory contention, inefficient query processing, or database lock contention. |
+| **Infrastructure** | Resource throttling (e.g., rate limits, QoS policies), or a failing network device. |
+| **External** | Third‑party API latency or upstream service slowdown. |
+
+*(These are hypotheses; no direct measurements are available in the provided data.)*
+
+---
+
+### 4. Recommended Troubleshooting Actions  
+1. **Validate Network Path**  
+   - Run `traceroute` / `mtr` from the client to the server to identify hops with high latency or packet loss.  
+   - Check link utilization on critical routers/switches during the spike period.
+
+2. **Inspect Application Performance**  
+   - Review application logs for spikes in CPU, memory, or garbage collection pauses.  
+   - Profile database queries for lock contention or slow scans.
+
+3. **Examine Traffic Patterns**  
+   - Correlate request timestamps with latency to see if the spike aligns with traffic bursts or scheduled jobs.  
+   - Verify if any new deployments or configuration changes occurred before the spike.
+
+4. **Check External Dependencies**  
+   - Measure round‑trip times to upstream services or APIs.  
+   - Verify that any third‑party SLA thresholds are still met.
+
+5. **Review QoS / Rate‑Limiting Policies**  
+   - Ensure no new traffic shaping rules were applied that could throttle throughput.
+
+6. **Monitor Real‑Time Metrics**  
+   - Enable fine‑grained latency histograms and error counters to capture the next spike in detail.
+
+---
+
+### 5. Final Conclusion  
+The network/service is experiencing a **latency degradation**: average latency has risen to 320 ms, with a P95 of 650 ms and a Postman response of 720 ms. Error rates remain low but slightly elevated. The degradation likely stems from either network congestion or application‑level resource contention. Immediate steps should focus on network path diagnostics and application profiling to isolate the root cause, followed by targeted remediation (e.g., traffic shaping adjustments, resource scaling, or code optimization). Continuous monitoring of latency histograms will confirm whether the issue resolves or persists.

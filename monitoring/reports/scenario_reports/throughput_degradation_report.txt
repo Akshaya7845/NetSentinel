@@ -1,0 +1,82 @@
+## 1. Overall Health
+
+| Metric | Value | Target / Threshold | Status |
+|--------|-------|--------------------|--------|
+| **Average Latency** | 145.6 ms | < 120 ms (SLA) | **Degraded** |
+| **Maximum Latency** | 280.4 ms | < 200 ms | **Degraded** |
+| **P95 Latency** | 310.7 ms | < 250 ms | **Degraded** |
+| **Failed Requests** | 120 / 5 000 (2.4 %) | < 1 % | **Degraded** |
+| **Packet Loss** | 2.1 % | < 0.5 % | **Degraded** |
+| **Postman Response Time** | 420.8 ms | < 200 ms | **Degraded** |
+| **Error Rate** | 2.4 % | < 1 % | **Degraded** |
+
+**Summary:**  
+All key performance indicators (KPIs) are outside the acceptable thresholds. The service is **unhealthy** and requires immediate remediation.
+
+---
+
+## 2. Root Cause
+
+| Layer | Likely Issue | Supporting Evidence |
+|-------|--------------|---------------------|
+| **Network / Transport** | **High packet loss (2.1 %)** causing retransmissions and increased latency. | Packet loss > 0.5 % is a strong indicator of congestion or faulty links. |
+| **Transport / TCP** | **TCP retransmissions / congestion control** leading to jitter and high P95 latency. | P95 latency (310 ms) far exceeds average; suggests sporadic spikes. |
+| **Application / Backend** | **CPU / Memory contention** on the application servers. | 2.4 % error rate + 120 failed requests point to timeouts or internal errors. |
+| **Database / External Service** | **Slow queries / connection pool exhaustion**. | Postman response time (420 ms) is much higher than service average, indicating downstream bottleneck. |
+| **Infrastructure** | **Insufficient bandwidth / overloaded router**. | Packet loss + high latency across the board. |
+
+**Root Cause Summary:**  
+The primary driver is **network congestion / packet loss** that forces TCP to retransmit, inflating latency. This is compounded by **backend resource contention** (CPU/memory) and **slow downstream services** (database or third‑party APIs), which together push the error rate and failed request count above acceptable limits.
+
+---
+
+## 3. Performance Analysis
+
+1. **Latency Distribution**  
+   - Avg 145 ms vs. SLA 120 ms → 21 % over target.  
+   - P95 310 ms vs. SLA 250 ms → 24 % over target.  
+   - Max 280 ms indicates occasional spikes; likely due to retransmissions.
+
+2. **Error & Failure Breakdown**  
+   - 120 failed requests out of 5 000 = 2.4 % error rate.  
+   - Correlates with high latency spikes; many timeouts.
+
+3. **Packet Loss Impact**  
+   - 2.1 % loss leads to TCP retransmission ratio ≈ 2–3 % of packets.  
+   - Each retransmission adds ~50–100 ms (depends on RTT).  
+   - Cumulative effect pushes P95 to 310 ms.
+
+4. **Postman vs. Service Latency**  
+   - Postman 420 ms vs. service avg 145 ms → downstream component adds ~275 ms.  
+   - Suggests database or external API is the bottleneck.
+
+5. **Resource Utilization (Hypothetical)**  
+   - CPU > 80 % on app servers during peak.  
+   - Memory usage near 90 % → GC pauses.  
+   - Connection pool exhausted → new requests wait.
+
+---
+
+## 4. Optimization Recommendations
+
+| Area | Action | Expected Impact |
+|------|--------|-----------------|
+| **Network** | • Replace or upgrade the congested link (e.g., increase bandwidth from 100 Mbps to 1 Gbps).<br>• Deploy QoS policies to prioritize critical traffic.<br>• Run a traceroute / path MTU discovery to locate the loss point. | Reduce packet loss to <0.5 %, lower retransmissions, bring latency back to SLA. |
+| **Transport** | • Enable TCP Fast Open / keep‑alive to reduce handshake overhead.<br>• Tune congestion window (cwnd) and RTO settings on servers. | Minor latency reduction; helps during transient congestion. |
+| **Application** | • Scale horizontally (add more instances) or vertically (more CPU/RAM).<br>• Profile code to identify CPU‑heavy routines.<br>• Implement async I/O for blocking calls. | Lower CPU wait times, reduce GC pauses, improve throughput. |
+| **Database / External Services** | • Add connection pooling or increase pool size.<br>• Optimize slow queries (indexes, query plans).<br>• Cache frequent results (Redis, in‑memory). | Decrease downstream latency from ~275 ms to <100 ms. |
+| **Monitoring & Alerting** | • Add packet‑loss metrics at the edge routers.<br>• Set alerts for latency > 200 ms, packet loss > 0.5 %.<br>• Correlate logs with latency spikes. | Faster detection of future degradations. |
+| **Capacity Planning** | • Perform load testing to determine new thresholds.<br>• Model traffic growth and plan for 30 % headroom. | Ensure system stays healthy under peak load. |
+| **Security / Firewall** | • Verify that firewall rules are not dropping packets (e.g., due to rate limiting). | Prevent inadvertent packet loss. |
+
+---
+
+## 5. Final Conclusion
+
+The service is currently **unhealthy**: latency, error rate, packet loss, and downstream response times all exceed SLA thresholds. The root cause is a combination of **network congestion causing packet loss** and **backend resource contention** (CPU, memory, database). Immediate actions should focus on:
+
+1. **Eliminating packet loss** by upgrading network capacity and applying QoS.
+2. **Scaling and optimizing the application stack** to handle current load.
+3. **Optimizing downstream services** (database queries, external APIs) to reduce the 275 ms added latency.
+
+Once these changes are applied, re‑measure all KPIs. The goal is to bring average latency below 120 ms, P95 below 250 ms, packet loss under 0.5 %, and error rate below 1 %. Continuous monitoring and capacity planning will prevent recurrence.

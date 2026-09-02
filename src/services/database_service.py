@@ -435,3 +435,295 @@ class DatabaseService:
 
         finally:
             connection.close()
+
+    # ========================================================
+    # Week 14 - AI Scenario Results
+    # ========================================================
+
+    def insert_scenario_ai_result(
+        self,
+        scenario_name,
+        average_latency_ms,
+        maximum_latency_ms,
+        minimum_latency_ms,
+        p95_latency_ms,
+        total_requests,
+        failed_requests,
+        error_rate_percent,
+        postman_response_time_ms,
+        throughput_mbps,
+        baseline_throughput_mbps,
+        ai_report,
+    ):
+        """
+        Store a Week 14 AI scenario result in PostgreSQL.
+        """
+
+        if not ai_report or not ai_report.strip():
+            raise ValueError(
+                "AI scenario report cannot be empty."
+            )
+
+        connection = self.get_connection()
+
+        try:
+            with connection.cursor() as cursor:
+
+                cursor.execute(
+                    """
+                    INSERT INTO scenario_ai_results (
+                        scenario_name,
+                        average_latency_ms,
+                        maximum_latency_ms,
+                        minimum_latency_ms,
+                        p95_latency_ms,
+                        total_requests,
+                        failed_requests,
+                        error_rate_percent,
+                        postman_response_time_ms,
+                        throughput_mbps,
+                        baseline_throughput_mbps,
+                        ai_report
+                    )
+                    VALUES (
+                        %s, %s, %s, %s, %s, %s,
+                        %s, %s, %s, %s, %s, %s
+                    )
+                    RETURNING id;
+                    """,
+                    (
+                        scenario_name,
+                        average_latency_ms,
+                        maximum_latency_ms,
+                        minimum_latency_ms,
+                        p95_latency_ms,
+                        total_requests,
+                        failed_requests,
+                        error_rate_percent,
+                        postman_response_time_ms,
+                        throughput_mbps,
+                        baseline_throughput_mbps,
+                        ai_report.strip(),
+                    ),
+                )
+
+                result_id = cursor.fetchone()[0]
+
+            connection.commit()
+
+            return result_id
+
+        finally:
+            connection.close()
+
+    def get_scenario_ai_results(self):
+        """
+        Return Week 14 AI scenario results, newest first.
+        """
+
+        connection = self.get_connection()
+
+        try:
+            with connection.cursor(
+                cursor_factory=RealDictCursor
+            ) as cursor:
+
+                cursor.execute(
+                    """
+                    SELECT
+                        id,
+                        scenario_name,
+                        average_latency_ms,
+                        maximum_latency_ms,
+                        minimum_latency_ms,
+                        p95_latency_ms,
+                        total_requests,
+                        failed_requests,
+                        error_rate_percent,
+                        postman_response_time_ms,
+                        throughput_mbps,
+                        baseline_throughput_mbps,
+                        ai_report,
+                        created_at
+                    FROM scenario_ai_results
+                    ORDER BY created_at DESC, id DESC;
+                    """
+                )
+
+                return cursor.fetchall()
+
+        finally:
+            connection.close()
+
+    def get_scenario_ai_result(self, scenario_name):
+        """
+        Return the latest Week 14 AI result for a scenario.
+        """
+
+        connection = self.get_connection()
+
+        try:
+            with connection.cursor(
+                cursor_factory=RealDictCursor
+            ) as cursor:
+
+                cursor.execute(
+                    """
+                    SELECT
+                        id,
+                        scenario_name,
+                        average_latency_ms,
+                        maximum_latency_ms,
+                        minimum_latency_ms,
+                        p95_latency_ms,
+                        total_requests,
+                        failed_requests,
+                        error_rate_percent,
+                        postman_response_time_ms,
+                        throughput_mbps,
+                        baseline_throughput_mbps,
+                        ai_report,
+                        created_at
+                    FROM scenario_ai_results
+                    WHERE scenario_name = %s
+                    ORDER BY created_at DESC, id DESC
+                    LIMIT 1;
+                    """,
+                    (scenario_name,),
+                )
+
+                return cursor.fetchone()
+
+        finally:
+            connection.close()
+
+    # ========================================================
+    # Week 14 - AI Quality Results
+    # ========================================================
+
+    def insert_ai_quality_result(
+        self,
+        scenario_name,
+        report_file,
+        status,
+        quality_score,
+        validation_checks,
+        issues,
+    ):
+        """
+        Store a Week 14 AI quality-validation result in PostgreSQL.
+        """
+
+        connection = self.get_connection()
+
+        try:
+            with connection.cursor() as cursor:
+
+                cursor.execute(
+                    """
+                    INSERT INTO ai_quality_results (
+                        scenario_name,
+                        report_file,
+                        status,
+                        quality_score,
+                        validation_checks,
+                        issues
+                    )
+                    VALUES (
+                        %s, %s, %s, %s, %s::jsonb, %s::jsonb
+                    )
+                    RETURNING id;
+                    """,
+                    (
+                        scenario_name,
+                        report_file,
+                        status,
+                        quality_score,
+                        __import__("json").dumps(
+                            validation_checks or {}
+                        ),
+                        __import__("json").dumps(
+                            issues or []
+                        ),
+                    ),
+                )
+
+                result_id = cursor.fetchone()[0]
+
+            connection.commit()
+
+            return result_id
+
+        finally:
+            connection.close()
+
+    def get_ai_quality_results(self):
+        """
+        Return Week 14 AI quality-validation results,
+        newest first.
+        """
+
+        connection = self.get_connection()
+
+        try:
+            with connection.cursor(
+                cursor_factory=RealDictCursor
+            ) as cursor:
+
+                cursor.execute(
+                    """
+                    SELECT
+                        id,
+                        scenario_name,
+                        report_file,
+                        status,
+                        quality_score,
+                        validation_checks,
+                        issues,
+                        created_at
+                    FROM ai_quality_results
+                    ORDER BY created_at DESC, id DESC;
+                    """
+                )
+
+                return cursor.fetchall()
+
+        finally:
+            connection.close()
+
+    def get_latest_ai_quality_summary(self):
+        """
+        Return the latest overall Week 14 AI quality
+        validation summary.
+        """
+
+        connection = self.get_connection()
+
+        try:
+            with connection.cursor(
+                cursor_factory=RealDictCursor
+            ) as cursor:
+
+                cursor.execute(
+                    """
+                    SELECT
+                        COUNT(*) AS total_reports,
+                        COUNT(*) FILTER (
+                            WHERE status = 'PASS'
+                        ) AS passed,
+                        COUNT(*) FILTER (
+                            WHERE status = 'REVIEW'
+                        ) AS review,
+                        COUNT(*) FILTER (
+                            WHERE status = 'FAILED'
+                        ) AS failed,
+                        AVG(quality_score) AS average_quality_score
+                    FROM ai_quality_results;
+                    """
+                )
+
+                return cursor.fetchone()
+
+        finally:
+            connection.close()
+
