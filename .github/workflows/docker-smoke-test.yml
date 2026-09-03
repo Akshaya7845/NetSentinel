@@ -2434,7 +2434,7 @@ jobs:
             --cov-report=xml \
             --cov-report=html \
             --cov-fail-under=80 \
-            > evidence/week15/week15_coverage.txt
+            | tee evidence/week15/week15_coverage.txt
 
           cp htmlcov/index.html \
             evidence/week15/week15_coverage.html
