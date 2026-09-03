@@ -2431,7 +2431,10 @@ jobs:
           mkdir -p evidence/week15
 
           pytest tests/ \
-            --cov=src \
+            --cov=src/testing \
+            --cov=src/analytics \
+            --cov=src/metrics \
+            --cov=src/models \
             --cov-report=term-missing \
             --cov-report=xml \
             --cov-report=html \
