@@ -1,42 +1,42 @@
 {
   "test_type": "stress_test",
-  "test_at": "2026-09-03T08:32:13.985685",
+  "test_at": "2026-09-03T09:37:32.623518",
   "breaking_point": null,
   "max_stable_users": 100,
   "stress_levels": [
     {
       "concurrent_users": 10,
       "error_rate": 0.0,
-      "avg_latency": 15.92,
-      "p95_latency": 41.39,
+      "avg_latency": 11.78,
+      "p95_latency": 22.33,
       "verdict": "STABLE"
     },
     {
       "concurrent_users": 25,
       "error_rate": 0.0,
-      "avg_latency": 20.9,
-      "p95_latency": 34.68,
+      "avg_latency": 26.18,
+      "p95_latency": 42.05,
       "verdict": "STABLE"
     },
     {
       "concurrent_users": 50,
       "error_rate": 0.0,
-      "avg_latency": 44.51,
-      "p95_latency": 87.54,
+      "avg_latency": 96.84,
+      "p95_latency": 408.89,
       "verdict": "STABLE"
     },
     {
       "concurrent_users": 75,
       "error_rate": 0.0,
-      "avg_latency": 47.85,
-      "p95_latency": 139.73,
+      "avg_latency": 26.61,
+      "p95_latency": 59.21,
       "verdict": "STABLE"
     },
     {
       "concurrent_users": 100,
       "error_rate": 0.0,
-      "avg_latency": 56.79,
-      "p95_latency": 131.07,
+      "avg_latency": 36.48,
+      "p95_latency": 84.55,
       "verdict": "STABLE"
     }
   ]

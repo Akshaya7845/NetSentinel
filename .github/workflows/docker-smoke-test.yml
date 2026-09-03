@@ -2095,6 +2095,8 @@ jobs:
       # ==========================================================
 
       - name: Verify Week 14 AI Implementation
+      # ==========================================================
+      - name: Verify Week 14 AI Implementation
         run: |
           echo "=============================================="
           echo "Week 14 - AI Implementation"
@@ -2528,7 +2530,7 @@ jobs:
           with open(path, encoding='utf-8') as file:
               data = json.load(file)
 
-          max_stable = data.get('maximum_stable_users', 0)
+          max_stable = data.get('max_stable_users', 0)
           breaking_point = data.get('breaking_point')
 
           print(f'Maximum stable users: {max_stable}')
